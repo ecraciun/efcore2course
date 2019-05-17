@@ -57,6 +57,30 @@ namespace ContentPlatform.Data
                 .WithOne(p => p.Blog)
                 .HasForeignKey(p => p.BlogId);
 
+            modelBuilder.Entity<Post>()
+                .ToTable("BlogPosts")
+                .HasKey(p => p.PostId);
+
+            modelBuilder.Entity<Publisher>()
+                .Property(p => p.Name)
+                .IsRequired();
+            modelBuilder.Entity<Publisher>()
+                .Property(p => p.MainWebsite)
+                .IsRequired();
+
+            modelBuilder.Entity<Author>()
+                .Property(a => a.FirstName)
+                .IsRequired()
+                .HasMaxLength(60);
+            modelBuilder.Entity<Author>()
+                .Property(a => a.LastName)
+                .IsRequired()
+                .HasMaxLength(100);
+            modelBuilder.Entity<Author>()
+                .Property(a => a.Email)
+                .IsRequired();
+
+
             SeedData(modelBuilder);
 
         }
