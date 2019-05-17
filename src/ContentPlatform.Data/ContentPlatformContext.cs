@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 
 namespace ContentPlatform.Data
 {
@@ -44,7 +45,7 @@ namespace ContentPlatform.Data
                 .HasMany(p => p.Authors)
                 .WithOne(a => a.Publisher)
                 .HasForeignKey(a => a.PublisherId);
-                //.HasConstraintName("FK_Author_Publisher_PublisherId")
+            //.HasConstraintName("FK_Author_Publisher_PublisherId")
 
             modelBuilder.Entity<Publisher>()
                 .HasMany(p => p.Blogs)
@@ -62,44 +63,46 @@ namespace ContentPlatform.Data
 
         private static void SeedData(ModelBuilder modelBuilder)
         {
-            //modelBuilder.Entity<Author>().HasData(
-            //    new Author
-            //    {
-            //        AuthorId = 1,
-            //        Email = "a@a.a",
-            //        FirstName = "John",
-            //        LastName = "Snow"
-            //    },
-            //    new Author
-            //    {
-            //        AuthorId = 2,
-            //        Email = "b@b.b",
-            //        FirstName = "Arya",
-            //        LastName = "Stark"
-            //    },
-            //    new Author
-            //    {
-            //        AuthorId = 3,
-            //        Email = "c@c.c",
-            //        FirstName = "Margaery",
-            //        LastName = "Tyrell"
-            //    }
-            //);
+            modelBuilder.Entity<Publisher>().HasData(
+                new Publisher
+                {
+                    MainWebsite = "http://a.a.a",
+                    Name = "G.R.R.M.",
+                    PublisherId = 1
+                },
+                new Publisher
+                {
+                    MainWebsite = "http://contoso.com",
+                    Name = "Contoso",
+                    PublisherId = 2
+                }
+            );
 
-            //modelBuilder.Entity<Publisher>().HasData(
-            //    new Publisher
-            //    {
-            //        MainWebsite = "http://a.a.a",
-            //        Name = "G.R.R.M.",
-            //        PublisherId = 1
-            //    },
-            //    new Publisher
-            //    {
-            //        MainWebsite = "http://contoso.com",
-            //        Name = "Contoso",
-            //        PublisherId = 2
-            //    }
-            //);
+            modelBuilder.Entity<Author>().HasData(
+                new Author
+                {
+                    AuthorId = 1,
+                    Email = "a@a.a",
+                    FirstName = "John",
+                    LastName = "Snow",
+                    PublisherId = 1
+                },
+                new Author
+                {
+                    AuthorId = 2,
+                    Email = "b@b.b",
+                    FirstName = "Arya",
+                    LastName = "Stark",
+                    PublisherId = 1
+                },
+                new Author
+                {
+                    AuthorId = 3,
+                    Email = "c@c.c",
+                    FirstName = "Margaery",
+                    LastName = "Tyrell",
+                    PublisherId = 1
+                });
         }
     }
 }
