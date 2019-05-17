@@ -106,6 +106,10 @@ namespace ContentPlatform.Data
             //    .Property(p => p.TitleBackgroundColor)
             //    .HasConversion(new ColorToStringValueConverter());
 
+            modelBuilder.Entity<Blog>()
+                .Property(b => b.BlogType)
+                .HasConversion(new EnumToStringConverter<BlogType>());
+
             SeedData(modelBuilder);
 
         }

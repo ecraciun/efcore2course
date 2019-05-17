@@ -13,7 +13,7 @@ namespace ContentPlatform.Console
         {
             System.Console.WriteLine("Hello World!");
             Migrate();
-            //AddEntityWithGeneratedValue();
+            AddEntityWithGeneratedValue();
         }
 
         private static void Migrate()
