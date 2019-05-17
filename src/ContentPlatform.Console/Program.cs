@@ -18,14 +18,95 @@ namespace ContentPlatform.Console
             System.Console.WriteLine("Hello World!");
             using (_ctx = new ContentPlatformContext())
             {
-                //_ctx.Database.Migrate();
+                _ctx.Database.Migrate();
                 //AddEntityWithGeneratedValue();
                 //RunManyToManyExamples();
+                //RunOneToOneExamples();
             }
         }
 
 
+        #region One to one
 
+        private static void RunOneToOneExamples()
+        {
+            //AddNewPublisherWithLocation();
+            //AddLocationUsingPublisherId();
+            //AddLocationToExistingPublisher();
+            //EditALocation();
+            //ReplaceALocation();
+            //ReplaceALocationNotTracked();
+            //ReplaceLocationNotInMemory();
+        }
+
+        private static void ReplaceLocationNotInMemory()
+        {
+            var publisher = _ctx.Publishers.FirstOrDefault(s => s.MainOffice != null);
+            publisher.MainOffice = new Location { Address = "Berlin" };
+            //this will fail...EF Core tries to insert a duplicate PublisherId FK
+            _ctx.SaveChanges();
+        }
+
+        private static void ReplaceALocationNotTracked()
+        {
+            Publisher publisher;
+            using (var separateOperation = new ContentPlatformContext())
+            {
+                publisher = _ctx.Publishers.Include(p => p.MainOffice)
+                                  .FirstOrDefault(p => p.PublisherId == 1);
+            }
+            publisher.MainOffice = new Location { Address = "Bucharest" };
+            _ctx.Publishers.Attach(publisher);
+            
+            _ctx.SaveChanges();
+        }
+
+        private static void ReplaceALocation()
+        {
+            var publisher = _ctx.Publishers.Include(p => p.MainOffice)
+                                  .FirstOrDefault(p => p.PublisherId == 1);
+            publisher.MainOffice = new Location { Address = "Chicago" };
+            _ctx.SaveChanges();
+        }
+
+        private static void EditALocation()
+        {
+            var publisher = _ctx.Publishers.Include(p => p.MainOffice)
+                                  .FirstOrDefault(p => p.PublisherId == 1);
+            publisher.MainOffice.Address = "London";
+            _ctx.SaveChanges();
+        }
+
+        private static void AddLocationToExistingPublisher()
+        {
+            Publisher publisher;
+            using (var separateOperation = new ContentPlatformContext())
+            {
+                publisher = _ctx.Publishers.Find(2);
+            }
+            publisher.MainOffice = new Location { Address = "Paris" };
+            _ctx.Publishers.Attach(publisher);
+            _ctx.SaveChanges();
+        }
+
+        private static void AddLocationUsingPublisherId()
+        {
+            //Note: PublisherId 1 does not have a location yet!
+            var identity = new Location { PublisherId = 1, Address = "NYC" };
+            _ctx.Add(identity);
+            _ctx.SaveChanges();
+        }
+
+        private static void AddNewPublisherWithLocation()
+        {
+            var publisher = new Publisher { Name = "EA", MainWebsite ="a" };
+            publisher.MainOffice = new Location { Address = "Seattle" };
+            _ctx.Publishers.Add(publisher);
+            _ctx.SaveChanges();
+        }
+
+
+        #endregion One to one
 
 
         #region Many to many
