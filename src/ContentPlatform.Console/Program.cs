@@ -20,21 +20,29 @@ namespace ContentPlatform.Console
             {
                 //_ctx.Database.Migrate();
                 //AddEntityWithGeneratedValue();
-                //PrePopulateAfterManyToMany();
-                //JoinAuthorsAndPosts();
-                //AddPostContribution();
-                //AddPostContributionUntracked();
-                //AddNewAuthorViaDisconnectedPostObject();
-                //GetAuthorWithPosts();
-                //GetAuthorsForPostInMemory();
-                //RemoveJoinBetweenAuthorAndPostSimple();
-                //RemovePostFromAuthor();
-                //RemovePostFromAuthorWhenDisconnected();
+                //RunManyToManyExamples();
             }
         }
 
 
 
+
+
+        #region Many to many
+
+        private static void RunManyToManyExamples()
+        {
+            //PrePopulateAfterManyToMany();
+            //JoinAuthorsAndPosts();
+            //AddPostContribution();
+            //AddPostContributionUntracked();
+            //AddNewAuthorViaDisconnectedPostObject();
+            //GetAuthorWithPosts();
+            //GetAuthorsForPostInMemory();
+            //RemoveJoinBetweenAuthorAndPostSimple();
+            //RemovePostFromAuthor();
+            //RemovePostFromAuthorWhenDisconnected();
+        }
 
         private static void RemovePostFromAuthorWhenDisconnected()
         {
@@ -171,6 +179,8 @@ namespace ContentPlatform.Console
 
             _ctx.SaveChanges();
         }
+
+        #endregion Many to many
 
         private static void AddEntityWithGeneratedValue()
         {
