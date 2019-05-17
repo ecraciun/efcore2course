@@ -8,5 +8,8 @@
         public string FullName => $"{LastName} {FirstName}";
         public string Email { get; set; }
         //public List<Contribution> Contributions { get; set; }
+
+        public Publisher Publisher { get; set; }
+        public int PublisherId { get; set; }
     }
 }

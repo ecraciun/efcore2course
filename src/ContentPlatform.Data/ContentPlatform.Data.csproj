@@ -5,7 +5,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20190517074650_AddedOneToMany.cs" />
+    <Compile Remove="Migrations\20190517074650_AddedOneToMany.Designer.cs" />
+    <Compile Remove="Migrations\20190517081424_RemovedInitialSeed.cs" />
+    <Compile Remove="Migrations\20190517081424_RemovedInitialSeed.Designer.cs" />
+    <Compile Remove="Migrations\20190517081617_FkFix.cs" />
+    <Compile Remove="Migrations\20190517081617_FkFix.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.4" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
