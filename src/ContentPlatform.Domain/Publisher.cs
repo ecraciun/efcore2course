@@ -4,6 +4,12 @@ namespace ContentPlatform.Domain
 {
     public class Publisher
     {
+        public Publisher()
+        {
+            Blogs = new List<Blog>();
+            Authors = new List<Author>();
+        }
+
         public int PublisherId { get; set; }
         public string Name { get; set; }
         public string MainWebsite { get; set; }

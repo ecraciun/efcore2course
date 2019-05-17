@@ -4,14 +4,16 @@ using ContentPlatform.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ContentPlatform.Data.Migrations
 {
     [DbContext(typeof(ContentPlatformContext))]
-    partial class ContentPlatformContextModelSnapshot : ModelSnapshot
+    [Migration("20190517135545_AddedManyToMany")]
+    partial class AddedManyToMany
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

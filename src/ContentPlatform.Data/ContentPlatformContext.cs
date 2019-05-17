@@ -21,8 +21,8 @@ namespace ContentPlatform.Data
             IServiceCollection serviceCollection = new ServiceCollection();
             serviceCollection.AddLogging(builder => builder
                         .AddConsole()
-                        .AddFilter
-                        (DbLoggerCategory.Database.Command.Name, level => level == LogLevel.Information));
+                        .AddFilter(DbLoggerCategory.Database.Command.Name, level => level == LogLevel.Information)
+                        .AddFilter(DbLoggerCategory.ChangeTracking.Name, level => level == LogLevel.Debug));
 
             MyConsoleLoggerFactory = serviceCollection.BuildServiceProvider().GetService<ILoggerFactory>();
         }
@@ -44,10 +44,26 @@ namespace ContentPlatform.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            AddRelationships(modelBuilder);
+
+            AddColumnConstraints(modelBuilder);
+
+            AddExclusions(modelBuilder);
+
+            AddDefaultValues(modelBuilder);
+
+            AddConversions(modelBuilder);
+
+            SeedData(modelBuilder);
+
+        }
+
+        private static void AddRelationships(ModelBuilder modelBuilder)
+        {
             modelBuilder.Entity<Publisher>()
-                .HasMany(p => p.Authors)
-                .WithOne(a => a.Publisher)
-                .HasForeignKey(a => a.PublisherId);
+                            .HasMany(p => p.Authors)
+                            .WithOne(a => a.Publisher)
+                            .HasForeignKey(a => a.PublisherId);
             //.HasConstraintName("FK_Author_Publisher_PublisherId")
 
             modelBuilder.Entity<Publisher>()
@@ -60,9 +76,27 @@ namespace ContentPlatform.Data
                 .WithOne(p => p.Blog)
                 .HasForeignKey(p => p.BlogId);
 
+            modelBuilder.Entity<Contribution>()
+                .ToTable("Contributions")
+                .HasKey(c => new { c.AuthorId, c.PostId });
+            modelBuilder.Entity<Contribution>()
+                .HasOne(c => c.Author)
+                .WithMany(a => a.Contributions)
+                .HasForeignKey(c => c.AuthorId)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Contribution>()
+                .HasOne(c => c.Post)
+                .WithMany(p => p.Contributions)
+                .HasForeignKey(c => c.PostId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+        }
+
+        private static void AddColumnConstraints(ModelBuilder modelBuilder)
+        {
             modelBuilder.Entity<Post>()
-                .ToTable("BlogPosts")
-                .HasKey(p => p.PostId);
+                            .ToTable("BlogPosts")
+                            .HasKey(p => p.PostId);
 
             modelBuilder.Entity<Publisher>()
                 .Property(p => p.Name)
@@ -82,16 +116,26 @@ namespace ContentPlatform.Data
             modelBuilder.Entity<Author>()
                 .Property(a => a.Email)
                 .IsRequired();
+        }
 
+        private static void AddExclusions(ModelBuilder modelBuilder)
+        {
             modelBuilder.Entity<Blog>()
-                .Ignore(b => b.TakeDownTime);
-            modelBuilder.Ignore<BlogMetadata>();
+                            .Ignore(b => b.TakeDownTime);
 
+            modelBuilder.Ignore<BlogMetadata>();
+        }
+
+        private static void AddDefaultValues(ModelBuilder modelBuilder)
+        {
             modelBuilder.Entity<Post>()
                 .Property(p => p.Version)
                 .ValueGeneratedOnAddOrUpdate()
                 .HasDefaultValueSql("NEWID()");
+        }
 
+        private static void AddConversions(ModelBuilder modelBuilder)
+        {
             modelBuilder.Entity<Post>()
                 .Property(p => p.TitleBackgroundColor)
                 .HasConversion(
@@ -109,9 +153,6 @@ namespace ContentPlatform.Data
             modelBuilder.Entity<Blog>()
                 .Property(b => b.BlogType)
                 .HasConversion(new EnumToStringConverter<BlogType>());
-
-            SeedData(modelBuilder);
-
         }
 
         private ValueConverter<Color, string> ColorConverter
