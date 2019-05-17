@@ -3,14 +3,16 @@ using ContentPlatform.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ContentPlatform.Data.Migrations
 {
     [DbContext(typeof(ContentPlatformContext))]
-    partial class ContentPlatformContextModelSnapshot : ModelSnapshot
+    [Migration("20190517070654_AddAuthorDataInitial")]
+    partial class AddAuthorDataInitial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -118,20 +120,6 @@ namespace ContentPlatform.Data.Migrations
                     b.HasKey("PublisherId");
 
                     b.ToTable("Publishers");
-
-                    b.HasData(
-                        new
-                        {
-                            PublisherId = 1,
-                            MainWebsite = "http://a.a.a",
-                            Name = "G.R.R.M."
-                        },
-                        new
-                        {
-                            PublisherId = 2,
-                            MainWebsite = "http://contoso.com",
-                            Name = "Contoso"
-                        });
                 });
 #pragma warning restore 612, 618
         }

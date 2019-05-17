@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace ContentPlatform.Web
 {
@@ -22,6 +23,12 @@ namespace ContentPlatform.Web
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+            services.AddLogging(options =>
+                options.AddConsole().AddFilter(
+                    DbLoggerCategory.Database.Command.Name, level => level == LogLevel.Information));
+
+            var loggerFactory = services.BuildServiceProvider().GetService<ILoggerFactory>();
+
             services.AddDbContextPool<ContentPlatformContext>(
                 options => options.UseSqlServer(
                     Configuration.GetConnectionString("ContentPlatformConnection"), 
@@ -32,7 +39,10 @@ namespace ContentPlatform.Web
                         //providerOptions.MigrationsAssembly("");
                         providerOptions.MinBatchSize(6);
                         //providerOptions.MigrationsHistoryTable("");
-                    }));
+                    })
+                    .UseLoggerFactory(loggerFactory)
+                    .EnableDetailedErrors()
+                    .EnableSensitiveDataLogging());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
