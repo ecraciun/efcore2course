@@ -22,7 +22,7 @@ namespace ContentPlatform.Web
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddDbContext<ContentPlatformContext>(
+            services.AddDbContextPool<ContentPlatformContext>(
                 options => options.UseSqlServer(
                     Configuration.GetConnectionString("ContentPlatformConnection"), 
                     providerOptions =>
@@ -61,8 +61,6 @@ namespace ContentPlatform.Web
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-
-            app.
         }
     }
 }
