@@ -19,11 +19,117 @@ namespace ContentPlatform.Console
             using (_ctx = new ContentPlatformContext())
             {
                 _ctx.Database.Migrate();
+                RunSingleExamples();
                 //AddEntityWithGeneratedValue();
                 //RunManyToManyExamples();
                 //RunOneToOneExamples();
+
             }
         }
+
+        #region Single
+
+        private static void RunSingleExamples()
+        {
+            QueryAndUpdateLocation_Disconnected();
+            MultipleDatabaseOperations();
+            RetrieveAndUpdateMultipleLocations();
+            RetrieveAndUpdateLocation();
+            MoreQueries();
+            DeleteWhileNotTracked();
+            DeleteMany();
+            DeleteWhileTracked();
+            DeleteUsingId(5);
+        }
+
+
+        private static void DeleteUsingId(int locationId)
+        {
+            var location = _ctx.Locations.Find(locationId);
+            _ctx.Remove(location);
+            _ctx.SaveChanges();
+            //alternate: call a stored procedure!
+            //_ctx.Database.ExecuteSqlCommand("exec DeleteById {0}", locationId);
+        }
+
+
+        private static void DeleteWhileTracked()
+        {
+            var location = _ctx.Locations.FirstOrDefault(s => s.Address == "AAA");
+            _ctx.Locations.Remove(location);
+            //alternates:
+            // _ctx.Remove(location);
+            // _ctx.Entry(location).State=EntityState.Deleted;
+            // _ctx.Locations.Remove(_ctx.Locations.Find(1));
+            _ctx.SaveChanges();
+        }
+
+        private static void DeleteMany()
+        {
+            var locations = _ctx.Locations.Where(s => s.Address.Contains("ō"));
+            _ctx.Locations.RemoveRange(locations);
+            //alternate: _ctx.RemoveRange(locations);
+            _ctx.SaveChanges();
+        }
+
+        private static void DeleteWhileNotTracked()
+        {
+            var location = _ctx.Locations.FirstOrDefault(s => s.Address == "ABC");
+            using (var contextNewAppInstance = new ContentPlatformContext())
+            {
+                contextNewAppInstance.Locations.Remove(location);
+                //contextNewAppInstance.Entry(location).State=EntityState.Deleted;
+                contextNewAppInstance.SaveChanges();
+            }
+        }
+
+        private static void MoreQueries()
+        {
+            var locations_NonParameterizedQuery = _ctx.Locations.Where(l => l.Address == "Chicago").ToList();
+            var name = "AAA";
+            var locations_ParameterizedQuery = _ctx.Locations.Where(l => l.Address == name).ToList();
+            var location_Object = _ctx.Locations.FirstOrDefault(l => l.Address == name);
+            var locations_ObjectFindByKeyValue = _ctx.Locations.Find(2);
+            var lastSampson = _ctx.Locations.OrderBy(s => s.LocationId).LastOrDefault(l => l.Address == name);
+            var locationsA = _ctx.Locations.Where(s => EF.Functions.Like(s.Address, "A%")).ToList();
+
+        }
+
+        private static void RetrieveAndUpdateLocation()
+        {
+            var location = _ctx.Locations.FirstOrDefault();
+            location.Address += "GRQ";
+            _ctx.SaveChanges();
+        }
+
+        private static void RetrieveAndUpdateMultipleLocations()
+        {
+            var locations = _ctx.Locations.ToList();
+            locations.ForEach(s => s.Address += "ADC");
+            _ctx.SaveChanges();
+        }
+
+        private static void MultipleDatabaseOperations()
+        {
+            var location = _ctx.Locations.FirstOrDefault();
+            location.Address += "ASDF";
+            _ctx.Locations.Add(new Location { Address = "CBA" });
+            _ctx.SaveChanges();
+        }
+
+
+        private static void QueryAndUpdateLocation_Disconnected()
+        {
+            var location = _ctx.Locations.FirstOrDefault();
+            location.Address = "ABC";
+            using (var newContextInstance = new ContentPlatformContext())
+            {
+                newContextInstance.Locations.Update(location);
+                newContextInstance.SaveChanges();
+            }
+        }
+
+        #endregion Single
 
 
         #region One to one
@@ -107,7 +213,6 @@ namespace ContentPlatform.Console
 
 
         #endregion One to one
-
 
         #region Many to many
 
