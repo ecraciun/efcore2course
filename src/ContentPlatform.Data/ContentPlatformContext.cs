@@ -86,7 +86,8 @@ namespace ContentPlatform.Data
 
             modelBuilder.Entity<Post>()
                 .Property(p => p.Version)
-                .ValueGeneratedOnAddOrUpdate();
+                .ValueGeneratedOnAddOrUpdate()
+                .HasDefaultValueSql("NEWID()");
 
             SeedData(modelBuilder);
 
