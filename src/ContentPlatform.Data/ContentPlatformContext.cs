@@ -84,6 +84,10 @@ namespace ContentPlatform.Data
                 .Ignore(b => b.TakeDownTime);
             modelBuilder.Ignore<BlogMetadata>();
 
+            modelBuilder.Entity<Post>()
+                .Property(p => p.Version)
+                .ValueGeneratedOnAddOrUpdate();
+
             SeedData(modelBuilder);
 
         }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ContentPlatform.Domain
 {
@@ -11,5 +12,6 @@ namespace ContentPlatform.Domain
         //public PostMetadata Metadata { get; set; }
         public Blog Blog { get; set; }
         public int BlogId { get; set; }
+        public Guid Version { get; set; }
     }
 }
