@@ -23,12 +23,27 @@ namespace ContentPlatform.Web
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddDbContext<ContentPlatformContext>(
-                options => options.UseSqlServer(Configuration.GetConnectionString("ContentPlatformConnection")));
+                options => options.UseSqlServer(
+                    Configuration.GetConnectionString("ContentPlatformConnection"), 
+                    providerOptions =>
+                    {
+                        providerOptions.CommandTimeout(60);
+                        providerOptions.MaxBatchSize(100);
+                        //providerOptions.MigrationsAssembly("");
+                        providerOptions.MinBatchSize(6);
+                        //providerOptions.MigrationsHistoryTable("");
+                    }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetService<ContentPlatformContext>();
+                context?.Database.Migrate();
+            }
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -46,6 +61,8 @@ namespace ContentPlatform.Web
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            app.
         }
     }
 }
