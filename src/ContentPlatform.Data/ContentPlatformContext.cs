@@ -80,6 +80,9 @@ namespace ContentPlatform.Data
                 .Property(a => a.Email)
                 .IsRequired();
 
+            modelBuilder.Entity<Blog>()
+                .Ignore(b => b.TakeDownTime);
+            modelBuilder.Ignore<BlogMetadata>();
 
             SeedData(modelBuilder);
 
