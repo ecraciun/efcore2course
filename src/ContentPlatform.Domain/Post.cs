@@ -9,5 +9,7 @@ namespace ContentPlatform.Domain
         public string Content { get; set; }
         //public List<Contribution> Contributions { get; set; }
         //public PostMetadata Metadata { get; set; }
+        public Blog Blog { get; set; }
+        public int BlogId { get; set; }
     }
 }

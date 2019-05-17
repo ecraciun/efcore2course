@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28803.452
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentPlatform.Domain", "ContentPlatform.Domain\ContentPlatform.Domain.csproj", "{18910752-B5F4-4943-A53E-14E5DA7AD0EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContentPlatform.Domain", "ContentPlatform.Domain\ContentPlatform.Domain.csproj", "{18910752-B5F4-4943-A53E-14E5DA7AD0EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentPlatform.Data", "ContentPlatform.Data\ContentPlatform.Data.csproj", "{A9506B11-D402-4A05-90B0-ED418B078EB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContentPlatform.Data", "ContentPlatform.Data\ContentPlatform.Data.csproj", "{A9506B11-D402-4A05-90B0-ED418B078EB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentPlatform.Web", "ContentPlatform.Web\ContentPlatform.Web.csproj", "{7A684535-325C-419C-A950-EC87EF8C1D7A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContentPlatform.Web", "ContentPlatform.Web\ContentPlatform.Web.csproj", "{7A684535-325C-419C-A950-EC87EF8C1D7A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentPlatform.Console", "ContentPlatform.Console\ContentPlatform.Console.csproj", "{F59DCA7D-90AA-487B-83BE-3D50852B3537}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{7A684535-325C-419C-A950-EC87EF8C1D7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A684535-325C-419C-A950-EC87EF8C1D7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A684535-325C-419C-A950-EC87EF8C1D7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F59DCA7D-90AA-487B-83BE-3D50852B3537}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F59DCA7D-90AA-487B-83BE-3D50852B3537}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F59DCA7D-90AA-487B-83BE-3D50852B3537}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F59DCA7D-90AA-487B-83BE-3D50852B3537}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
