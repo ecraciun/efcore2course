@@ -1,8 +1,11 @@
-﻿using ContentPlatform.Domain;
+﻿using ContentPlatform.Data.Converters;
+using ContentPlatform.Domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace ContentPlatform.Data
 {
@@ -89,9 +92,26 @@ namespace ContentPlatform.Data
                 .ValueGeneratedOnAddOrUpdate()
                 .HasDefaultValueSql("NEWID()");
 
+            modelBuilder.Entity<Post>()
+                .Property(p => p.TitleBackgroundColor)
+                .HasConversion(
+                    to => to.Name,
+                    from => Color.FromName(from)
+                );
+            //modelBuilder.Entity<Post>()
+            //    .Property(p => p.TitleBackgroundColor)
+            //    .HasConversion(ColorConverter);
+
+            //modelBuilder.Entity<Post>()
+            //    .Property(p => p.TitleBackgroundColor)
+            //    .HasConversion(new ColorToStringValueConverter());
+
             SeedData(modelBuilder);
 
         }
+
+        private ValueConverter<Color, string> ColorConverter
+            = new ValueConverter<Color, string>(c => c.Name, s => Color.FromName(s));
 
         private static void SeedData(ModelBuilder modelBuilder)
         {

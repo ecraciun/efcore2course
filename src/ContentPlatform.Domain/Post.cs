@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace ContentPlatform.Domain
 {
@@ -13,5 +14,6 @@ namespace ContentPlatform.Domain
         public Blog Blog { get; set; }
         public int BlogId { get; set; }
         public Guid Version { get; set; }
+        public Color TitleBackgroundColor { get; set; }
     }
 }
