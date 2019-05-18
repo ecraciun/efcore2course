@@ -11,6 +11,10 @@
     <Compile Remove="Migrations\20190517081424_RemovedInitialSeed.Designer.cs" />
     <Compile Remove="Migrations\20190517081617_FkFix.cs" />
     <Compile Remove="Migrations\20190517081617_FkFix.Designer.cs" />
+    <Compile Remove="Migrations\20190517103344_AddedManyToMany.cs" />
+    <Compile Remove="Migrations\20190517103344_AddedManyToMany.Designer.cs" />
+    <Compile Remove="Migrations\20190517103437_AddedManyToMany.cs" />
+    <Compile Remove="Migrations\20190517103437_AddedManyToMany.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

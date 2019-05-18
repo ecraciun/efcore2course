@@ -4,14 +4,16 @@ using ContentPlatform.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ContentPlatform.Data.Migrations
 {
     [DbContext(typeof(ContentPlatformContext))]
-    partial class ContentPlatformContextModelSnapshot : ModelSnapshot
+    [Migration("20190517135545_AddedManyToMany")]
+    partial class AddedManyToMany
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -116,13 +118,7 @@ namespace ContentPlatform.Data.Migrations
 
                     b.Property<string>("Address");
 
-                    b.Property<int?>("PublisherId");
-
                     b.HasKey("LocationId");
-
-                    b.HasIndex("PublisherId")
-                        .IsUnique()
-                        .HasFilter("[PublisherId] IS NOT NULL");
 
                     b.ToTable("Locations");
                 });
@@ -211,13 +207,6 @@ namespace ContentPlatform.Data.Migrations
                         .WithMany("Contributions")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Restrict);
-                });
-
-            modelBuilder.Entity("ContentPlatform.Domain.Location", b =>
-                {
-                    b.HasOne("ContentPlatform.Domain.Publisher", "Publisher")
-                        .WithOne("MainOffice")
-                        .HasForeignKey("ContentPlatform.Domain.Location", "PublisherId");
                 });
 
             modelBuilder.Entity("ContentPlatform.Domain.Post", b =>

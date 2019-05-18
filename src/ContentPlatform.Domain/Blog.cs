@@ -5,6 +5,11 @@ namespace ContentPlatform.Domain
 {
     public class Blog
     {
+        public Blog()
+        {
+            Posts = new List<Post>();
+        }
+
         public int BlogId { get; set; }
         public string Title { get; set; }
         public string Url { get; set; }
