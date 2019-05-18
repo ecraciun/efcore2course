@@ -1,6 +1,7 @@
 ﻿using ContentPlatform.Data.Converters;
 using ContentPlatform.Domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -27,6 +28,20 @@ namespace ContentPlatform.Data
                         .AddFilter(DbLoggerCategory.ChangeTracking.Name, level => level == LogLevel.Debug));
 
             MyConsoleLoggerFactory = serviceCollection.BuildServiceProvider().GetService<ILoggerFactory>();
+
+            this.ChangeTracker.StateChanged += StateChanged;
+            this.ChangeTracker.Tracked += Tracked;
+        }
+
+        private void Tracked(object sender, EntityTrackedEventArgs e)
+        {
+            //throw new NotImplementedException();
+        }
+
+        private void StateChanged(object sender, EntityStateChangedEventArgs e)
+        {
+            
+            //throw new NotImplementedException();
         }
 
         public DbSet<Author> Authors { get; set; }

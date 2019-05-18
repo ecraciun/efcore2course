@@ -25,9 +25,13 @@ namespace ContentPlatform.Console
                 //RunOneToOneExamples();
                 //RunShadowPropertiesExamples();
                 //RunOwnedPropertiesExamples();
-                RunGlobalQueryFilterExamples();
+                //RunGlobalQueryFilterExamples();
             }
         }
+
+
+
+        #region Global query filter
 
         private static void RunGlobalQueryFilterExamples()
         {
@@ -44,8 +48,6 @@ namespace ContentPlatform.Console
             var hasEmptyContent2 = allPosts2.Any(p => string.IsNullOrEmpty(p.Content));
         }
 
-        #region Global query filter
-
         private static void CreatePostWithoutContent()
         {
             var post = new Post
@@ -58,7 +60,6 @@ namespace ContentPlatform.Console
         }
 
         #endregion
-
 
         #region Owned properties
 
