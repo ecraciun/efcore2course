@@ -23,9 +23,55 @@ namespace ContentPlatform.Console
                 //AddEntityWithGeneratedValue();
                 //RunManyToManyExamples();
                 //RunOneToOneExamples();
-                RunShadowPropertiesExamples();
+                //RunShadowPropertiesExamples();
+                //RunOwnedPropertiesExamples();
             }
         }
+
+        #region Owned properties
+
+        private static void RunOwnedPropertiesExamples()
+        {
+            //CreatePostWithMetadata();
+            //ReplaceMetadata();
+            //CreatePostWithoutMetadata();
+        }
+
+        private static void CreatePostWithoutMetadata()
+        {
+            var post = new Post
+            {
+                Title = "123",
+                Content = "etc",
+                BlogId = 3,
+            };
+            _ctx.Posts.Add(post);
+            _ctx.SaveChanges();
+        }
+
+        private static void ReplaceMetadata()
+        {
+            var post = _ctx.Posts.FirstOrDefault(p => p.Metadata.Keywords == "a");
+            _ctx.Entry(post).Reference(p => p.Metadata).TargetEntry.State = EntityState.Detached;
+            post.Metadata = PostMetadata.Create("b", "b");
+            _ctx.Posts.Update(post);
+            _ctx.SaveChanges();
+        }
+
+        private static void CreatePostWithMetadata()
+        {
+            var post = new Post
+            {
+                Title = "abc",
+                Content = "etc",
+                BlogId = 3,
+                Metadata = PostMetadata.Create("a", "a")
+            };
+            _ctx.Posts.Add(post);
+            _ctx.SaveChanges();
+        }
+
+        #endregion Owned properties
 
         #region Shadow properties
 

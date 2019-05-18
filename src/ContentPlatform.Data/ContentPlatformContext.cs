@@ -67,9 +67,19 @@ namespace ContentPlatform.Data
             ChangeTracker.DetectChanges();
             var timestamp = DateTime.Now;
             foreach (var entry in ChangeTracker.Entries()
-                .Where(e => /*e.State == EntityState.Added ||*/ e.State == EntityState.Modified))
+                .Where(e => (e.State == EntityState.Added || e.State == EntityState.Modified)
+                && !e.Metadata.IsOwned()))
             {
                 entry.Property("LastModified").CurrentValue = timestamp;
+
+                if (entry.Entity is Post)
+                {
+                    //if (entry.Reference("Metadata").CurrentValue == null)
+                    //{
+                    //    entry.Reference("Metadata").CurrentValue = PostMetadata.Empty();
+                    //}
+                    entry.Reference("Metadata").TargetEntry.State = entry.State;
+                }
 
                 //if (entry.State == EntityState.Added)
                 //{
@@ -83,8 +93,11 @@ namespace ContentPlatform.Data
         {
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
-                modelBuilder.Entity(entityType.Name).Property<DateTime?>("Created").HasDefaultValueSql("GETDATE()");
-                modelBuilder.Entity(entityType.Name).Property<DateTime?>("LastModified");
+                if (!entityType.IsOwned())
+                {
+                    modelBuilder.Entity(entityType.Name).Property<DateTime?>("Created").HasDefaultValueSql("GETDATE()");
+                    modelBuilder.Entity(entityType.Name).Property<DateTime?>("LastModified");
+                }
             }
         }
 
@@ -120,6 +133,11 @@ namespace ContentPlatform.Data
                 .HasForeignKey(c => c.PostId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Post>().OwnsOne(p => p.Metadata,
+                pm =>
+                {
+                    pm.Property(x => x.Keywords).HasColumnName(nameof(PostMetadata.Keywords));
+                });
         }
 
         private static void AddColumnConstraints(ModelBuilder modelBuilder)
