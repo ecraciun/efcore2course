@@ -25,8 +25,40 @@ namespace ContentPlatform.Console
                 //RunOneToOneExamples();
                 //RunShadowPropertiesExamples();
                 //RunOwnedPropertiesExamples();
+                RunGlobalQueryFilterExamples();
             }
         }
+
+        private static void RunGlobalQueryFilterExamples()
+        {
+            CreatePostWithoutContent();
+            GetEmptyContentPost();
+        }
+
+        private static void GetEmptyContentPost()
+        {
+            var allPosts = _ctx.Posts.ToList();
+            var hasEmptyContent = allPosts.Any(p => string.IsNullOrEmpty(p.Content));
+
+            var allPosts2 = _ctx.Posts.IgnoreQueryFilters().ToList();
+            var hasEmptyContent2 = allPosts2.Any(p => string.IsNullOrEmpty(p.Content));
+        }
+
+        #region Global query filter
+
+        private static void CreatePostWithoutContent()
+        {
+            var post = new Post
+            {
+                Title = "abc123",
+                BlogId = 3,
+            };
+            _ctx.Posts.Add(post);
+            _ctx.SaveChanges();
+        }
+
+        #endregion
+
 
         #region Owned properties
 

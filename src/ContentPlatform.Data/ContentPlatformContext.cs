@@ -18,16 +18,16 @@ namespace ContentPlatform.Data
         public ContentPlatformContext(DbContextOptions<ContentPlatformContext> options) : base(options)
         { }
 
-        //public ContentPlatformContext()
-        //{
-        //    IServiceCollection serviceCollection = new ServiceCollection();
-        //    serviceCollection.AddLogging(builder => builder
-        //                .AddConsole()
-        //                .AddFilter(DbLoggerCategory.Database.Command.Name, level => level == LogLevel.Information)
-        //                .AddFilter(DbLoggerCategory.ChangeTracking.Name, level => level == LogLevel.Debug));
+        public ContentPlatformContext()
+        {
+            IServiceCollection serviceCollection = new ServiceCollection();
+            serviceCollection.AddLogging(builder => builder
+                        .AddConsole()
+                        .AddFilter(DbLoggerCategory.Database.Command.Name, level => level == LogLevel.Information)
+                        .AddFilter(DbLoggerCategory.ChangeTracking.Name, level => level == LogLevel.Debug));
 
-        //    MyConsoleLoggerFactory = serviceCollection.BuildServiceProvider().GetService<ILoggerFactory>();
-        //}
+            MyConsoleLoggerFactory = serviceCollection.BuildServiceProvider().GetService<ILoggerFactory>();
+        }
 
         public DbSet<Author> Authors { get; set; }
         public DbSet<Blog> Blogs { get; set; }
@@ -37,11 +37,11 @@ namespace ContentPlatform.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //optionsBuilder
-            //    .UseLoggerFactory(MyConsoleLoggerFactory)
-            //    .EnableSensitiveDataLogging(true)
-            //    .UseSqlServer(
-            //     "Server=(localdb)\\mssqllocaldb;Database=ContentPlatform;Trusted_Connection=True;MultipleActiveResultSets=true");
+            optionsBuilder
+                .UseLoggerFactory(MyConsoleLoggerFactory)
+                .EnableSensitiveDataLogging(true)
+                .UseSqlServer(
+                 "Server=(localdb)\\mssqllocaldb;Database=ContentPlatform;Trusted_Connection=True;MultipleActiveResultSets=true");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -58,8 +58,15 @@ namespace ContentPlatform.Data
 
             AddShadowProperties(modelBuilder);
 
+            AddGlobalQueryFilters(modelBuilder);
+
             SeedData(modelBuilder);
 
+        }
+
+        private void AddGlobalQueryFilters(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Post>().HasQueryFilter(p => !string.IsNullOrEmpty(p.Content));
         }
 
         public override int SaveChanges()
