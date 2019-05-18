@@ -19,13 +19,62 @@ namespace ContentPlatform.Console
             using (_ctx = new ContentPlatformContext())
             {
                 _ctx.Database.Migrate();
-                RunSingleExamples();
+                //RunSingleExamples();
                 //AddEntityWithGeneratedValue();
                 //RunManyToManyExamples();
                 //RunOneToOneExamples();
-
+                RunShadowPropertiesExamples();
             }
         }
+
+        #region Shadow properties
+
+        private static void RunShadowPropertiesExamples()
+        {
+            //CreateLocation();
+            //RetrieveLocationsCreatedInPastWeek();
+            CreateThenEditBlogWithPost();
+        }
+
+        private static void RetrieveLocationsCreatedInPastWeek()
+        {
+            var oneWeekAgo = DateTime.Now.AddDays(-7);
+            //var newLocations = _ctx.Locations
+            //                          .Where(s => EF.Property<DateTime>(s, "Created") >= oneWeekAgo)
+            //                          .ToList();
+            var locationsCreated = _ctx.Locations
+                                        .Where(l => EF.Property<DateTime>(l, "Created") >= oneWeekAgo)
+                                        .Select(l => new { l.LocationId, l.Address, Created = EF.Property<DateTime>(l, "Created") })
+                                        .ToList();
+        }
+
+        private static void CreateLocation()
+        {
+            var location = new Location { Address = "Somewhere over the rainbow" };
+            _ctx.Locations.Add(location);
+            //_ctx.Entry(location).Property("Created").CurrentValue = DateTime.Now;
+            //_ctx.Entry(location).Property("LastModified").CurrentValue = DateTime.Now;
+            _ctx.SaveChanges();
+        }
+
+        private static void CreateThenEditBlogWithPost()
+        {
+            var blog = new Blog
+            {
+                BlogType = BlogType.Gaming,
+                PublisherId = 1,
+                Title = "Level",
+                Url = "nivelul2.ro"
+            };
+            var post = new Post { Content = "lorem ipsum", Title = "New game out!" };
+            blog.Posts.Add(post);
+            _ctx.Blogs.Add(blog);
+            _ctx.SaveChanges();
+            post.Content += " Here is where to buy it.";
+            _ctx.SaveChanges();
+        }
+
+        #endregion Shadow properties
 
         #region Single
 
@@ -130,7 +179,6 @@ namespace ContentPlatform.Console
         }
 
         #endregion Single
-
 
         #region One to one
 

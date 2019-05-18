@@ -4,8 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace ContentPlatform.Data
 {
@@ -54,8 +56,36 @@ namespace ContentPlatform.Data
 
             AddConversions(modelBuilder);
 
+            AddShadowProperties(modelBuilder);
+
             SeedData(modelBuilder);
 
+        }
+
+        public override int SaveChanges()
+        {
+            ChangeTracker.DetectChanges();
+            var timestamp = DateTime.Now;
+            foreach (var entry in ChangeTracker.Entries()
+                .Where(e => /*e.State == EntityState.Added ||*/ e.State == EntityState.Modified))
+            {
+                entry.Property("LastModified").CurrentValue = timestamp;
+
+                //if (entry.State == EntityState.Added)
+                //{
+                //    entry.Property("Created").CurrentValue = timestamp;
+                //}
+            }
+            return base.SaveChanges();
+        }
+
+        private void AddShadowProperties(ModelBuilder modelBuilder)
+        {
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                modelBuilder.Entity(entityType.Name).Property<DateTime?>("Created").HasDefaultValueSql("GETDATE()");
+                modelBuilder.Entity(entityType.Name).Property<DateTime?>("LastModified");
+            }
         }
 
         private static void AddRelationships(ModelBuilder modelBuilder)
