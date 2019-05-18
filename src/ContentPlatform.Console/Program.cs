@@ -31,15 +31,15 @@ namespace ContentPlatform.Console
 
         private static void RunSingleExamples()
         {
-            QueryAndUpdateLocation_Disconnected();
-            MultipleDatabaseOperations();
-            RetrieveAndUpdateMultipleLocations();
-            RetrieveAndUpdateLocation();
-            MoreQueries();
-            DeleteWhileNotTracked();
-            DeleteMany();
-            DeleteWhileTracked();
-            DeleteUsingId(5);
+            //QueryAndUpdateLocation_Disconnected();
+            //MultipleDatabaseOperations();
+            //RetrieveAndUpdateMultipleLocations();
+            //RetrieveAndUpdateLocation();
+            //MoreQueries();
+            //DeleteWhileNotTracked();
+            //DeleteMany();
+            //DeleteWhileTracked();
+            //DeleteUsingId(5);
         }
 
 
@@ -55,7 +55,7 @@ namespace ContentPlatform.Console
 
         private static void DeleteWhileTracked()
         {
-            var location = _ctx.Locations.FirstOrDefault(s => s.Address == "AAA");
+            var location = _ctx.Locations.FirstOrDefault(s => s.Address == "London2");
             _ctx.Locations.Remove(location);
             //alternates:
             // _ctx.Remove(location);
@@ -66,7 +66,7 @@ namespace ContentPlatform.Console
 
         private static void DeleteMany()
         {
-            var locations = _ctx.Locations.Where(s => s.Address.Contains("ō"));
+            var locations = _ctx.Locations.Where(s => s.Address.Contains("AAA"));
             _ctx.Locations.RemoveRange(locations);
             //alternate: _ctx.RemoveRange(locations);
             _ctx.SaveChanges();
@@ -74,7 +74,7 @@ namespace ContentPlatform.Console
 
         private static void DeleteWhileNotTracked()
         {
-            var location = _ctx.Locations.FirstOrDefault(s => s.Address == "ABC");
+            var location = _ctx.Locations.FirstOrDefault(s => s.Address == "AAA2");
             using (var contextNewAppInstance = new ContentPlatformContext())
             {
                 contextNewAppInstance.Locations.Remove(location);
@@ -85,12 +85,12 @@ namespace ContentPlatform.Console
 
         private static void MoreQueries()
         {
-            var locations_NonParameterizedQuery = _ctx.Locations.Where(l => l.Address == "Chicago").ToList();
-            var name = "AAA";
+            var locations_NonParameterizedQuery = _ctx.Locations.Where(l => l.Address == "Chicago2").ToList();
+            var name = "AAA2";
             var locations_ParameterizedQuery = _ctx.Locations.Where(l => l.Address == name).ToList();
             var location_Object = _ctx.Locations.FirstOrDefault(l => l.Address == name);
             var locations_ObjectFindByKeyValue = _ctx.Locations.Find(2);
-            var lastSampson = _ctx.Locations.OrderBy(s => s.LocationId).LastOrDefault(l => l.Address == name);
+            var lastLocation = _ctx.Locations.OrderBy(s => s.LocationId).LastOrDefault(l => l.Address == name);
             var locationsA = _ctx.Locations.Where(s => EF.Functions.Like(s.Address, "A%")).ToList();
 
         }
@@ -98,22 +98,22 @@ namespace ContentPlatform.Console
         private static void RetrieveAndUpdateLocation()
         {
             var location = _ctx.Locations.FirstOrDefault();
-            location.Address += "GRQ";
+            location.Address += "3";
             _ctx.SaveChanges();
         }
 
         private static void RetrieveAndUpdateMultipleLocations()
         {
             var locations = _ctx.Locations.ToList();
-            locations.ForEach(s => s.Address += "ADC");
+            locations.ForEach(s => s.Address += "2");
             _ctx.SaveChanges();
         }
 
         private static void MultipleDatabaseOperations()
         {
             var location = _ctx.Locations.FirstOrDefault();
-            location.Address += "ASDF";
-            _ctx.Locations.Add(new Location { Address = "CBA" });
+            location.Address += "1";
+            _ctx.Locations.Add(new Location { Address = "AAA" });
             _ctx.SaveChanges();
         }
 
