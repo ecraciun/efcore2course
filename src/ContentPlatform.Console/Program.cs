@@ -26,10 +26,18 @@ namespace ContentPlatform.Console
                 //RunShadowPropertiesExamples();
                 //RunOwnedPropertiesExamples();
                 //RunGlobalQueryFilterExamples();
+                RunQueryTypesExamples();
             }
         }
 
+        #region Query types
 
+        private static void RunQueryTypesExamples()
+        {
+            var data = _ctx.BlogStatistics.ToList();
+        }
+
+        #endregion Query types
 
         #region Global query filter
 

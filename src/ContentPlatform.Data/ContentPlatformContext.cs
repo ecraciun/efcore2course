@@ -50,6 +50,8 @@ namespace ContentPlatform.Data
         public DbSet<Location> Locations { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<Publisher> Publishers { get; set; }
+        public DbQuery<BlogStatistics> BlogStatistics { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -76,10 +78,47 @@ namespace ContentPlatform.Data
 
             AddGlobalQueryFilters(modelBuilder);
 
+            AddQueryTypes(modelBuilder);
+
             SeedData(modelBuilder);
 
             modelBuilder.ApplyConfiguration(new PublisherEntityTypeConfiguration());
 
+        }
+
+        private void AddQueryTypes(ModelBuilder modelBuilder)
+        {
+            modelBuilder
+                .Query<BlogStatistics>().ToView("View_BlogPostCount")
+                .Property(bs => bs.PostCount).HasColumnName("Count");
+
+            // DEFINING QUERY with LINQ
+            //modelBuilder.Query<BlogStatistics>().ToQuery(
+            //    () => Blogs.Include(b => b.Posts).Select(
+            //        b => new BlogStatistics
+            //        {
+            //            PostCount = b.Posts.Count,
+            //            Title = b.Title,
+            //            Url = b.Url
+            //        }
+            //    ));
+
+
+            //DEFINING QUERY with RAW SQL and Stored Procedure
+            //modelBuilder.Query<BlogStatistics>().ToQuery(
+            //    () => Query<BlogStatistics>().FromSql(@"EXEC SomeStoredProc {0}",1)
+            //    );
+
+            // DEFINING QUERY with RAW SQL
+            //modelBuilder.Query<BlogStatistics>().ToQuery(
+            //    () => Query<BlogStatistics>().FromSql(
+            //        @"
+            //        SELECT b.Title, b.Url,  COUNT(p.PostId) as PostCount
+            //        FROM Blogs b
+            //        JOIN BlogPosts p on p.BlogId = b.BlogId
+            //        GROUP BY b.Title, b.Url
+            //    ")
+            //);
         }
 
         private void AddGlobalQueryFilters(ModelBuilder modelBuilder)
@@ -118,7 +157,7 @@ namespace ContentPlatform.Data
         {
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
-                if (!entityType.IsOwned())
+                if (!entityType.IsOwned() && !entityType.IsQueryType)
                 {
                     modelBuilder.Entity(entityType.Name).Property<DateTime?>("Created").HasDefaultValueSql("GETDATE()");
                     modelBuilder.Entity(entityType.Name).Property<DateTime?>("LastModified");
