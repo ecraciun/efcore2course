@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContentPlatform.Data", "Con
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContentPlatform.Web", "ContentPlatform.Web\ContentPlatform.Web.csproj", "{7A684535-325C-419C-A950-EC87EF8C1D7A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentPlatform.Console", "ContentPlatform.Console\ContentPlatform.Console.csproj", "{F59DCA7D-90AA-487B-83BE-3D50852B3537}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContentPlatform.Console", "ContentPlatform.Console\ContentPlatform.Console.csproj", "{F59DCA7D-90AA-487B-83BE-3D50852B3537}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentPlatform.Domain.Tests", "..\tests\ContentPlatform.Domain.Tests\ContentPlatform.Domain.Tests.csproj", "{8895ED3F-CFB4-4A50-BF98-2E9273CCE2C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{F59DCA7D-90AA-487B-83BE-3D50852B3537}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F59DCA7D-90AA-487B-83BE-3D50852B3537}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F59DCA7D-90AA-487B-83BE-3D50852B3537}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8895ED3F-CFB4-4A50-BF98-2E9273CCE2C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8895ED3F-CFB4-4A50-BF98-2E9273CCE2C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8895ED3F-CFB4-4A50-BF98-2E9273CCE2C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8895ED3F-CFB4-4A50-BF98-2E9273CCE2C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
