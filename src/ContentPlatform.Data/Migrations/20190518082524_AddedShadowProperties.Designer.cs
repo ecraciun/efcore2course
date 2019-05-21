@@ -4,14 +4,16 @@ using ContentPlatform.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ContentPlatform.Data.Migrations
 {
     [DbContext(typeof(ContentPlatformContext))]
-    partial class ContentPlatformContextModelSnapshot : ModelSnapshot
+    [Migration("20190518082524_AddedShadowProperties")]
+    partial class AddedShadowProperties
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -262,27 +264,6 @@ namespace ContentPlatform.Data.Migrations
                         .WithMany("Posts")
                         .HasForeignKey("BlogId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.OwnsOne("ContentPlatform.Domain.PostMetadata", "Metadata", b1 =>
-                        {
-                            b1.Property<int>("PostId")
-                                .ValueGeneratedOnAdd()
-                                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                            b1.Property<string>("Keywords")
-                                .HasColumnName("Keywords");
-
-                            b1.Property<string>("Title");
-
-                            b1.HasKey("PostId");
-
-                            b1.ToTable("BlogPosts");
-
-                            b1.HasOne("ContentPlatform.Domain.Post")
-                                .WithOne("Metadata")
-                                .HasForeignKey("ContentPlatform.Domain.PostMetadata", "PostId")
-                                .OnDelete(DeleteBehavior.Cascade);
-                        });
                 });
 #pragma warning restore 612, 618
         }

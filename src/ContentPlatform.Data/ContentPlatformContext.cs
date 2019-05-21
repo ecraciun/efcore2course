@@ -1,11 +1,15 @@
 ﻿using ContentPlatform.Data.Converters;
+using ContentPlatform.Data.EntityConfigurations;
 using ContentPlatform.Domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace ContentPlatform.Data
 {
@@ -25,6 +29,20 @@ namespace ContentPlatform.Data
                         .AddFilter(DbLoggerCategory.ChangeTracking.Name, level => level == LogLevel.Debug));
 
             MyConsoleLoggerFactory = serviceCollection.BuildServiceProvider().GetService<ILoggerFactory>();
+
+            this.ChangeTracker.StateChanged += StateChanged;
+            this.ChangeTracker.Tracked += Tracked;
+        }
+
+        private void Tracked(object sender, EntityTrackedEventArgs e)
+        {
+            //throw new NotImplementedException();
+        }
+
+        private void StateChanged(object sender, EntityStateChangedEventArgs e)
+        {
+            
+            //throw new NotImplementedException();
         }
 
         public DbSet<Author> Authors { get; set; }
@@ -32,14 +50,19 @@ namespace ContentPlatform.Data
         public DbSet<Location> Locations { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<Publisher> Publishers { get; set; }
+        public DbQuery<BlogStatistics> BlogStatistics { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder
+            if (optionsBuilder.IsConfigured == false)
+            {
+                optionsBuilder
                 .UseLoggerFactory(MyConsoleLoggerFactory)
                 .EnableSensitiveDataLogging(true)
                 .UseSqlServer(
                  "Server=(localdb)\\mssqllocaldb;Database=ContentPlatform;Trusted_Connection=True;MultipleActiveResultSets=true");
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -54,23 +77,99 @@ namespace ContentPlatform.Data
 
             AddConversions(modelBuilder);
 
+            AddShadowProperties(modelBuilder);
+
+            AddGlobalQueryFilters(modelBuilder);
+
+            AddQueryTypes(modelBuilder);
+
             SeedData(modelBuilder);
 
+            modelBuilder.ApplyConfiguration(new PublisherEntityTypeConfiguration());
+
+        }
+
+        private void AddQueryTypes(ModelBuilder modelBuilder)
+        {
+            modelBuilder
+                .Query<BlogStatistics>().ToView("View_BlogPostCount")
+                .Property(bs => bs.PostCount).HasColumnName("Count");
+
+            // DEFINING QUERY with LINQ
+            //modelBuilder.Query<BlogStatistics>().ToQuery(
+            //    () => Blogs.Include(b => b.Posts).Select(
+            //        b => new BlogStatistics
+            //        {
+            //            PostCount = b.Posts.Count,
+            //            Title = b.Title,
+            //            Url = b.Url
+            //        }
+            //    ));
+
+
+            //DEFINING QUERY with RAW SQL and Stored Procedure
+            //modelBuilder.Query<BlogStatistics>().ToQuery(
+            //    () => Query<BlogStatistics>().FromSql(@"EXEC SomeStoredProc {0}",1)
+            //    );
+
+            // DEFINING QUERY with RAW SQL
+            //modelBuilder.Query<BlogStatistics>().ToQuery(
+            //    () => Query<BlogStatistics>().FromSql(
+            //        @"
+            //        SELECT b.Title, b.Url,  COUNT(p.PostId) as PostCount
+            //        FROM Blogs b
+            //        JOIN BlogPosts p on p.BlogId = b.BlogId
+            //        GROUP BY b.Title, b.Url
+            //    ")
+            //);
+        }
+
+        private void AddGlobalQueryFilters(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Post>().HasQueryFilter(p => !string.IsNullOrEmpty(p.Content));
+        }
+
+        public override int SaveChanges()
+        {
+            ChangeTracker.DetectChanges();
+            var timestamp = DateTime.Now;
+            foreach (var entry in ChangeTracker.Entries()
+                .Where(e => (e.State == EntityState.Added || e.State == EntityState.Modified)
+                && !e.Metadata.IsOwned()))
+            {
+                entry.Property("LastModified").CurrentValue = timestamp;
+
+                if (entry.Entity is Post)
+                {
+                    //if (entry.Reference("Metadata").CurrentValue == null)
+                    //{
+                    //    entry.Reference("Metadata").CurrentValue = PostMetadata.Empty();
+                    //}
+                    entry.Reference("Metadata").TargetEntry.State = entry.State;
+                }
+
+                //if (entry.State == EntityState.Added)
+                //{
+                //    entry.Property("Created").CurrentValue = timestamp;
+                //}
+            }
+            return base.SaveChanges();
+        }
+
+        private void AddShadowProperties(ModelBuilder modelBuilder)
+        {
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                if (!entityType.IsOwned() && !entityType.IsQueryType)
+                {
+                    modelBuilder.Entity(entityType.Name).Property<DateTime?>("Created").HasDefaultValueSql("GETDATE()");
+                    modelBuilder.Entity(entityType.Name).Property<DateTime?>("LastModified");
+                }
+            }
         }
 
         private static void AddRelationships(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Publisher>()
-                            .HasMany(p => p.Authors)
-                            .WithOne(a => a.Publisher)
-                            .HasForeignKey(a => a.PublisherId);
-            //.HasConstraintName("FK_Author_Publisher_PublisherId")
-
-            modelBuilder.Entity<Publisher>()
-                .HasMany(p => p.Blogs)
-                .WithOne(b => b.Publisher)
-                .HasForeignKey(b => b.PublisherId);
-
             modelBuilder.Entity<Blog>()
                 .HasMany(b => b.Posts)
                 .WithOne(p => p.Blog)
@@ -90,6 +189,11 @@ namespace ContentPlatform.Data
                 .HasForeignKey(c => c.PostId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Post>().OwnsOne(p => p.Metadata,
+                pm =>
+                {
+                    pm.Property(x => x.Keywords).HasColumnName(nameof(PostMetadata.Keywords));
+                });
         }
 
         private static void AddColumnConstraints(ModelBuilder modelBuilder)
@@ -97,13 +201,6 @@ namespace ContentPlatform.Data
             modelBuilder.Entity<Post>()
                             .ToTable("BlogPosts")
                             .HasKey(p => p.PostId);
-
-            modelBuilder.Entity<Publisher>()
-                .Property(p => p.Name)
-                .IsRequired();
-            modelBuilder.Entity<Publisher>()
-                .Property(p => p.MainWebsite)
-                .IsRequired();
 
             modelBuilder.Entity<Author>()
                 .Property(a => a.FirstName)

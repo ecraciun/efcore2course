@@ -19,13 +19,149 @@ namespace ContentPlatform.Console
             using (_ctx = new ContentPlatformContext())
             {
                 _ctx.Database.Migrate();
-                RunSingleExamples();
+                //RunSingleExamples();
                 //AddEntityWithGeneratedValue();
                 //RunManyToManyExamples();
                 //RunOneToOneExamples();
-
+                //RunShadowPropertiesExamples();
+                //RunOwnedPropertiesExamples();
+                //RunGlobalQueryFilterExamples();
+                RunQueryTypesExamples();
             }
         }
+
+        #region Query types
+
+        private static void RunQueryTypesExamples()
+        {
+            var data = _ctx.BlogStatistics.ToList();
+        }
+
+        #endregion Query types
+
+        #region Global query filter
+
+        private static void RunGlobalQueryFilterExamples()
+        {
+            CreatePostWithoutContent();
+            GetEmptyContentPost();
+        }
+
+        private static void GetEmptyContentPost()
+        {
+            var allPosts = _ctx.Posts.ToList();
+            var hasEmptyContent = allPosts.Any(p => string.IsNullOrEmpty(p.Content));
+
+            var allPosts2 = _ctx.Posts.IgnoreQueryFilters().ToList();
+            var hasEmptyContent2 = allPosts2.Any(p => string.IsNullOrEmpty(p.Content));
+        }
+
+        private static void CreatePostWithoutContent()
+        {
+            var post = new Post
+            {
+                Title = "abc123",
+                BlogId = 3,
+            };
+            _ctx.Posts.Add(post);
+            _ctx.SaveChanges();
+        }
+
+        #endregion
+
+        #region Owned properties
+
+        private static void RunOwnedPropertiesExamples()
+        {
+            //CreatePostWithMetadata();
+            //ReplaceMetadata();
+            //CreatePostWithoutMetadata();
+        }
+
+        private static void CreatePostWithoutMetadata()
+        {
+            var post = new Post
+            {
+                Title = "123",
+                Content = "etc",
+                BlogId = 3,
+            };
+            _ctx.Posts.Add(post);
+            _ctx.SaveChanges();
+        }
+
+        private static void ReplaceMetadata()
+        {
+            var post = _ctx.Posts.FirstOrDefault(p => p.Metadata.Keywords == "a");
+            _ctx.Entry(post).Reference(p => p.Metadata).TargetEntry.State = EntityState.Detached;
+            post.Metadata = PostMetadata.Create("b", "b");
+            _ctx.Posts.Update(post);
+            _ctx.SaveChanges();
+        }
+
+        private static void CreatePostWithMetadata()
+        {
+            var post = new Post
+            {
+                Title = "abc",
+                Content = "etc",
+                BlogId = 3,
+                Metadata = PostMetadata.Create("a", "a")
+            };
+            _ctx.Posts.Add(post);
+            _ctx.SaveChanges();
+        }
+
+        #endregion Owned properties
+
+        #region Shadow properties
+
+        private static void RunShadowPropertiesExamples()
+        {
+            //CreateLocation();
+            //RetrieveLocationsCreatedInPastWeek();
+            CreateThenEditBlogWithPost();
+        }
+
+        private static void RetrieveLocationsCreatedInPastWeek()
+        {
+            var oneWeekAgo = DateTime.Now.AddDays(-7);
+            //var newLocations = _ctx.Locations
+            //                          .Where(s => EF.Property<DateTime>(s, "Created") >= oneWeekAgo)
+            //                          .ToList();
+            var locationsCreated = _ctx.Locations
+                                        .Where(l => EF.Property<DateTime>(l, "Created") >= oneWeekAgo)
+                                        .Select(l => new { l.LocationId, l.Address, Created = EF.Property<DateTime>(l, "Created") })
+                                        .ToList();
+        }
+
+        private static void CreateLocation()
+        {
+            var location = new Location { Address = "Somewhere over the rainbow" };
+            _ctx.Locations.Add(location);
+            //_ctx.Entry(location).Property("Created").CurrentValue = DateTime.Now;
+            //_ctx.Entry(location).Property("LastModified").CurrentValue = DateTime.Now;
+            _ctx.SaveChanges();
+        }
+
+        private static void CreateThenEditBlogWithPost()
+        {
+            var blog = new Blog
+            {
+                BlogType = BlogType.Gaming,
+                PublisherId = 1,
+                Title = "Level",
+                Url = "nivelul2.ro"
+            };
+            var post = new Post { Content = "lorem ipsum", Title = "New game out!" };
+            blog.Posts.Add(post);
+            _ctx.Blogs.Add(blog);
+            _ctx.SaveChanges();
+            post.Content += " Here is where to buy it.";
+            _ctx.SaveChanges();
+        }
+
+        #endregion Shadow properties
 
         #region Single
 
@@ -130,7 +266,6 @@ namespace ContentPlatform.Console
         }
 
         #endregion Single
-
 
         #region One to one
 
