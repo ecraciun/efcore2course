@@ -1,4 +1,5 @@
 ﻿using ContentPlatform.Data.Converters;
+using ContentPlatform.Data.EntityConfigurations;
 using ContentPlatform.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -77,6 +78,8 @@ namespace ContentPlatform.Data
 
             SeedData(modelBuilder);
 
+            modelBuilder.ApplyConfiguration(new PublisherEntityTypeConfiguration());
+
         }
 
         private void AddGlobalQueryFilters(ModelBuilder modelBuilder)
@@ -125,17 +128,6 @@ namespace ContentPlatform.Data
 
         private static void AddRelationships(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Publisher>()
-                            .HasMany(p => p.Authors)
-                            .WithOne(a => a.Publisher)
-                            .HasForeignKey(a => a.PublisherId);
-            //.HasConstraintName("FK_Author_Publisher_PublisherId")
-
-            modelBuilder.Entity<Publisher>()
-                .HasMany(p => p.Blogs)
-                .WithOne(b => b.Publisher)
-                .HasForeignKey(b => b.PublisherId);
-
             modelBuilder.Entity<Blog>()
                 .HasMany(b => b.Posts)
                 .WithOne(p => p.Blog)
@@ -167,13 +159,6 @@ namespace ContentPlatform.Data
             modelBuilder.Entity<Post>()
                             .ToTable("BlogPosts")
                             .HasKey(p => p.PostId);
-
-            modelBuilder.Entity<Publisher>()
-                .Property(p => p.Name)
-                .IsRequired();
-            modelBuilder.Entity<Publisher>()
-                .Property(p => p.MainWebsite)
-                .IsRequired();
 
             modelBuilder.Entity<Author>()
                 .Property(a => a.FirstName)
