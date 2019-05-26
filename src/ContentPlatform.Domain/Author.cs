@@ -14,9 +14,9 @@ namespace ContentPlatform.Domain
         public string LastName { get; set; }
         public string FullName => $"{LastName} {FirstName}";
         public string Email { get; set; }
-        public List<Contribution> Contributions { get; set; }
+        public virtual List<Contribution> Contributions { get; set; }
 
-        public Publisher Publisher { get; set; }
+        public virtual Publisher Publisher { get; set; }
         public int PublisherId { get; set; }
     }
 }

@@ -29,10 +29,64 @@ namespace ContentPlatform.Console
                 //RunOwnedPropertiesExamples();
                 //RunGlobalQueryFilterExamples();
                 //RunQueryTypesExamples();
-                RunTransactionExamples();
+                //RunTransactionExamples();
+                RunLazyLoadingExamples();
             }
         }
 
+
+        #region Lazy loading
+
+        private static void RunLazyLoadingExamples()
+        {
+            //LazyLoadPublisherBlogs();
+            //LazyLoadWithoutContext();
+            LazyLoadWithNewContext();
+        }
+
+        private static void LazyLoadPublisherBlogs()
+        {
+            var publishers = _ctx.Publishers.ToList();
+
+            foreach (var publisher in publishers)
+            {
+                System.Console.WriteLine($"{publisher.Name}");
+                foreach (var blog in publisher.Blogs)
+                {
+                    System.Console.WriteLine($"  {blog.Title}");
+                }
+            }
+        }
+
+        private static void LazyLoadWithoutContext()
+        {
+            Publisher publisher;
+            using (var context = new ContentPlatformContext())
+            {
+                publisher = context.Publishers.FirstOrDefault();
+            }
+            var blogs = publisher.Blogs;
+            System.Console.WriteLine($"Posts count: {blogs.Count}");
+        }
+
+        private static void LazyLoadWithNewContext()
+        {
+            Publisher publisher;
+            using (var context = new ContentPlatformContext())
+            {
+                publisher = context.Publishers.FirstOrDefault();
+            }
+
+            using (var context2 = new ContentPlatformContext())
+            {
+                context2.Publishers.Attach(publisher);
+                var blogs = publisher.Blogs;
+                System.Console.WriteLine($"Posts count: {blogs.Count}");
+            }
+        }
+
+
+        #endregion Lazy loading
 
 
         #region Transactions
