@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Infrastructure;
+﻿using System;
 using System.Collections.Generic;
 
 namespace ContentPlatform.Domain
@@ -13,12 +13,12 @@ namespace ContentPlatform.Domain
             Authors = new List<Author>();
         }
 
-        private Publisher(ILazyLoader lazyLoader)
+        private Publisher(Action<object, string> lazyLoader)
         {
             LazyLoader = lazyLoader;
         }
 
-        private ILazyLoader LazyLoader { get; set; }
+        private Action<object, string> LazyLoader { get; set; }
 
         public int PublisherId { get; set; }
         public string Name { get; set; }
