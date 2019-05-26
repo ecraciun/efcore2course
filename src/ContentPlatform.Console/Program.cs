@@ -50,11 +50,9 @@ namespace ContentPlatform.Console
 
             foreach (var publisher in publishers)
             {
-                System.Console.ForegroundColor = ConsoleColor.Green;
                 System.Console.WriteLine($"{publisher.Name}");
                 foreach (var blog in publisher.Blogs)
                 {
-                    System.Console.ForegroundColor = ConsoleColor.Cyan;
                     System.Console.WriteLine($"  {blog.Title}");
                 }
             }
