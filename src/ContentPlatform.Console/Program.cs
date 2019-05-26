@@ -39,9 +39,9 @@ namespace ContentPlatform.Console
 
         private static void RunLazyLoadingExamples()
         {
-            LazyLoadPublisherBlogs();
+            //LazyLoadPublisherBlogs();
             //LazyLoadWithoutContext();
-            //LazyLoadWithNewContext();
+            LazyLoadWithNewContext();
         }
 
         private static void LazyLoadPublisherBlogs()
@@ -62,28 +62,28 @@ namespace ContentPlatform.Console
 
         private static void LazyLoadWithoutContext()
         {
-            Blog blog;
+            Publisher publisher;
             using (var context = new ContentPlatformContext())
             {
-                blog = context.Blogs.FirstOrDefault();
+                publisher = context.Publishers.FirstOrDefault();
             }
-            var posts = blog.Posts;
-            System.Console.WriteLine($"Posts count: {posts.Count}");
+            var blogs = publisher.Blogs;
+            System.Console.WriteLine($"Posts count: {blogs.Count}");
         }
 
         private static void LazyLoadWithNewContext()
         {
-            Blog blog;
+            Publisher publisher;
             using (var context = new ContentPlatformContext())
             {
-                blog = context.Blogs.FirstOrDefault();
+                publisher = context.Publishers.FirstOrDefault();
             }
 
             using (var context2 = new ContentPlatformContext())
             {
-                context2.Blogs.Attach(blog);
-                var posts = blog.Posts;
-                System.Console.WriteLine($"Posts count: {posts.Count}");
+                context2.Publishers.Attach(publisher);
+                var blogs = publisher.Blogs;
+                System.Console.WriteLine($"Posts count: {blogs.Count}");
             }
         }
 
