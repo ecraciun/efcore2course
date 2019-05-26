@@ -1,10 +1,12 @@
 ﻿using ContentPlatform.Data;
 using ContentPlatform.Domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Transactions;
 using Console = System.Console;
 
 namespace ContentPlatform.Console
@@ -26,9 +28,86 @@ namespace ContentPlatform.Console
                 //RunShadowPropertiesExamples();
                 //RunOwnedPropertiesExamples();
                 //RunGlobalQueryFilterExamples();
-                RunQueryTypesExamples();
+                //RunQueryTypesExamples();
+                RunTransactionExamples();
             }
         }
+
+
+
+        #region Transactions
+
+        private static void RunTransactionExamples()
+        {
+            //DemonstrateDefaultDbTransaction();
+
+            //DemonstrateUserDefinedTransaction();
+
+            //UseExecutionStrategyWhenRetryIsEnabled();
+
+            UseExecutionStrategyWhenRetryIsEnabledWithAmbientTransactions();
+        }
+
+        private static void DemonstrateDefaultDbTransaction()
+        {
+            var location = _ctx.Locations.FirstOrDefault();
+            location.Address += " more address details";
+
+            var blog = _ctx.Blogs.FirstOrDefault();
+            blog.Description += " etc";
+
+            System.Console.ForegroundColor = ConsoleColor.Green;
+            System.Console.Write(2 == _ctx.SaveChanges());
+            System.Console.ResetColor();
+        }
+
+        private static void DemonstrateUserDefinedTransaction()
+        {
+            using (var transaction = _ctx.Database.BeginTransaction())
+            {
+                _ctx.Locations.Add(new Location { Address = "123" });
+                _ctx.SaveChanges();
+                _ctx.Locations.Add(new Location { Address = "1234" });
+                _ctx.SaveChanges();
+                transaction.Commit();
+            }
+        }
+
+        private static void UseExecutionStrategyWhenRetryIsEnabled()
+        {
+            var strategy = _ctx.Database.CreateExecutionStrategy();
+
+            strategy.Execute(() =>
+            {
+                using (var transaction = _ctx.Database.BeginTransaction())
+                {
+                    _ctx.Locations.Add(new Location { Address = "123" });
+                    _ctx.SaveChanges();
+                    _ctx.Locations.Add(new Location { Address = "1234" });
+                    _ctx.SaveChanges();
+                    transaction.Commit();
+                }
+            });
+        }
+
+        private static void UseExecutionStrategyWhenRetryIsEnabledWithAmbientTransactions()
+        {
+            var strategy = _ctx.Database.CreateExecutionStrategy();
+
+            strategy.Execute(() =>
+            {
+                using (var transaction = new TransactionScope())
+                {
+                    _ctx.Locations.Add(new Location { Address = "123" });
+                    _ctx.SaveChanges();
+                    _ctx.Locations.Add(new Location { Address = "1234" });
+                    _ctx.SaveChanges();
+                    transaction.Complete();
+                }
+            });
+        }
+
+        #endregion Transactions
 
         #region Query types
 
@@ -298,7 +377,7 @@ namespace ContentPlatform.Console
             }
             publisher.MainOffice = new Location { Address = "Bucharest" };
             _ctx.Publishers.Attach(publisher);
-            
+
             _ctx.SaveChanges();
         }
 
@@ -340,7 +419,7 @@ namespace ContentPlatform.Console
 
         private static void AddNewPublisherWithLocation()
         {
-            var publisher = new Publisher { Name = "EA", MainWebsite ="a" };
+            var publisher = new Publisher { Name = "EA", MainWebsite = "a" };
             publisher.MainOffice = new Location { Address = "Seattle" };
             _ctx.Publishers.Add(publisher);
             _ctx.SaveChanges();
@@ -440,7 +519,7 @@ namespace ContentPlatform.Console
             {
                 post = ctx2.Posts.Find(6);
             }
-            
+
             post.Contributions.Add(new Contribution { AuthorId = 3 });
             _ctx.Posts.Attach(post);
             _ctx.ChangeTracker.DetectChanges(); // show debug info

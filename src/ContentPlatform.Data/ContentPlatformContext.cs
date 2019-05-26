@@ -61,7 +61,8 @@ namespace ContentPlatform.Data
                 .UseLoggerFactory(MyConsoleLoggerFactory)
                 .EnableSensitiveDataLogging(true)
                 .UseSqlServer(
-                 "Server=(localdb)\\mssqllocaldb;Database=ContentPlatform;Trusted_Connection=True;MultipleActiveResultSets=true");
+                 "Server=(localdb)\\mssqllocaldb;Database=ContentPlatform;Trusted_Connection=True;MultipleActiveResultSets=true",
+                 options => options.EnableRetryOnFailure(10));
             }
         }
 
