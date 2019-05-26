@@ -60,6 +60,7 @@ namespace ContentPlatform.Data
                 optionsBuilder
                 .UseLoggerFactory(MyConsoleLoggerFactory)
                 .EnableSensitiveDataLogging(true)
+                .UseLazyLoadingProxies()
                 .UseSqlServer(
                  "Server=(localdb)\\mssqllocaldb;Database=ContentPlatform;Trusted_Connection=True;MultipleActiveResultSets=true",
                  options => options.EnableRetryOnFailure(10));

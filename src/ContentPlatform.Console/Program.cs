@@ -29,10 +29,66 @@ namespace ContentPlatform.Console
                 //RunOwnedPropertiesExamples();
                 //RunGlobalQueryFilterExamples();
                 //RunQueryTypesExamples();
-                RunTransactionExamples();
+                //RunTransactionExamples();
+                RunLazyLoadingExamples();
             }
         }
 
+
+        #region Lazy loading
+
+        private static void RunLazyLoadingExamples()
+        {
+            LazyLoadPublisherBlogs();
+            //LazyLoadWithoutContext();
+            //LazyLoadWithNewContext();
+        }
+
+        private static void LazyLoadPublisherBlogs()
+        {
+            var publishers = _ctx.Publishers.ToList();
+
+            foreach (var publisher in publishers)
+            {
+                System.Console.ForegroundColor = ConsoleColor.Green;
+                System.Console.WriteLine($"{publisher.Name}");
+                foreach (var blog in publisher.Blogs)
+                {
+                    System.Console.ForegroundColor = ConsoleColor.Cyan;
+                    System.Console.WriteLine($"  {blog.Title}");
+                }
+            }
+        }
+
+        private static void LazyLoadWithoutContext()
+        {
+            Blog blog;
+            using (var context = new ContentPlatformContext())
+            {
+                blog = context.Blogs.FirstOrDefault();
+            }
+            var posts = blog.Posts;
+            System.Console.WriteLine($"Posts count: {posts.Count}");
+        }
+
+        private static void LazyLoadWithNewContext()
+        {
+            Blog blog;
+            using (var context = new ContentPlatformContext())
+            {
+                blog = context.Blogs.FirstOrDefault();
+            }
+
+            using (var context2 = new ContentPlatformContext())
+            {
+                context2.Blogs.Attach(blog);
+                var posts = blog.Posts;
+                System.Console.WriteLine($"Posts count: {posts.Count}");
+            }
+        }
+
+
+        #endregion Lazy loading
 
 
         #region Transactions

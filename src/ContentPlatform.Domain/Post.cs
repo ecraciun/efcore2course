@@ -15,9 +15,9 @@ namespace ContentPlatform.Domain
         public int PostId { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
-        public List<Contribution> Contributions { get; set; }
-        public PostMetadata Metadata { get; set; }
-        public Blog Blog { get; set; }
+        public virtual List<Contribution> Contributions { get; set; }
+        public virtual PostMetadata Metadata { get; set; }
+        public virtual Blog Blog { get; set; }
         public int BlogId { get; set; }
         public Guid Version { get; set; }
         public Color TitleBackgroundColor { get; set; }
