@@ -12,7 +12,7 @@ namespace SnackMachine.UI.ViewModels
         private readonly SnackMachine_ _snackMachine;
 
         public string MoneyInTransaction => _snackMachine.MoneyInTransaction.ToString();
-        public Money MoneyInside => _snackMachine.MoneyInside + _snackMachine.MoneyInTransaction;
+        public Money MoneyInside => _snackMachine.MoneyInside;
 
         public SnackMachineViewModel(SnackMachine_ snackMachine)
         {
