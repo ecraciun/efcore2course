@@ -6,7 +6,7 @@ namespace SnackMachine.Domain
     {
         public int OneCentCount { get; private set; }
         public int TenCentCount { get; private set; }
-        public int QuarterCentCount { get; private set; }
+        public int QuarterCount { get; private set; }
         public int OneDollarCount { get; private set; }
         public int FiveDollarCount { get; private set; }
         public int TwentyDollarCount { get; private set; }
@@ -14,7 +14,7 @@ namespace SnackMachine.Domain
 
         public int OneCentCountInTransaction { get; private set; }
         public int TenCentCountInTransaction { get; private set; }
-        public int QuarterCentCountInTransaction { get; private set; }
+        public int QuarterCountInTransaction { get; private set; }
         public int OneDollarCountInTransaction { get; private set; }
         public int FiveDollarCountInTransaction { get; private set; }
         public int TwentyDollarCountInTransaction { get; private set; }
@@ -30,7 +30,7 @@ namespace SnackMachine.Domain
         {
             OneCentCount += oneCentCount;
             TenCentCount += tenCentCount;
-            QuarterCentCount += quarterCount;
+            QuarterCount += quarterCount;
             OneDollarCount += oneDollarCount;
             FiveDollarCount += fiveDollarCount;
             TwentyDollarCount += twentyDollarCount;
@@ -40,7 +40,7 @@ namespace SnackMachine.Domain
         {
             OneCentCountInTransaction = 0;
             TenCentCountInTransaction = 0;
-            QuarterCentCountInTransaction = 0;
+            QuarterCountInTransaction = 0;
             OneDollarCountInTransaction = 0;
             FiveDollarCountInTransaction = 0;
             TwentyDollarCountInTransaction = 0;
@@ -50,7 +50,7 @@ namespace SnackMachine.Domain
         {
             OneCentCount += OneCentCountInTransaction;
             TenCentCount += TenCentCountInTransaction;
-            QuarterCentCount += QuarterCentCountInTransaction;
+            QuarterCount += QuarterCountInTransaction;
             OneDollarCount += OneDollarCountInTransaction;
             FiveDollarCount += FiveDollarCountInTransaction;
             TwentyDollarCount += TwentyDollarCountInTransaction;
