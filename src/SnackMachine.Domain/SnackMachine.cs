@@ -8,16 +8,10 @@ namespace SnackMachine.Domain
     {
         public Money MoneyInside { get; private set; } = Money.None;
         public decimal MoneyInTransaction { get; private set; } = 0m;
-        protected List<Slot> Slots { get; private set; }
+        protected List<Slot> Slots { get; private set; } = new List<Slot>();
 
         public SnackMachine()
         {
-            Slots = new List<Slot>
-            {
-                new Slot(this, 1),
-                new Slot(this, 2),
-                new Slot(this, 3),
-            };
         }
 
 
@@ -76,6 +70,11 @@ namespace SnackMachine.Domain
         public void LoadMoney(Money money)
         {
             MoneyInside += money;
+        }
+
+        public IReadOnlyList<SnackPile> GetAllSnackPiles()
+        {
+            return Slots.OrderBy(x => x.Position).Select(x => x.SnackPile).ToList();
         }
     }
 }

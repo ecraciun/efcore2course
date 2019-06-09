@@ -11,6 +11,8 @@ namespace SnackMachine.Domain
         { }
 
         public DbSet<SnackMachine> SnackMachines { get; set; }
+        public DbSet<Snack> Snacks { get; set; }
+        public DbSet<Slot> Slots { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -21,6 +23,12 @@ namespace SnackMachine.Domain
             modelBuilder.Entity<SnackMachine>().OwnsOne(x => x.MoneyInside).Property(m => m.OneDollarCount);
             modelBuilder.Entity<SnackMachine>().OwnsOne(x => x.MoneyInside).Property(m => m.FiveDollarCount);
             modelBuilder.Entity<SnackMachine>().OwnsOne(x => x.MoneyInside).Property(m => m.TwentyDollarCount);
+
+            modelBuilder.Entity<SnackMachine>().HasMany(typeof(Slot), "Slots").WithOne("SnackMachine");
+
+            modelBuilder.Entity<Slot>().OwnsOne(x => x.SnackPile).Property(s => s.Price);
+            modelBuilder.Entity<Slot>().OwnsOne(x => x.SnackPile).Property(s => s.Quantity);
+            modelBuilder.Entity<Slot>().OwnsOne(x => x.SnackPile).HasOne(s => s.Snack);
         }
     }
 }

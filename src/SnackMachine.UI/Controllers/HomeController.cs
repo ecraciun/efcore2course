@@ -8,26 +8,26 @@ namespace SnackMachine.UI.Controllers
     public class HomeController : Controller
     {
         private const string MainViewName = nameof(Index);
-        private static SnackMachine_ SnackMachine = new SnackMachine_();
+        private static SnackMachine_ SnackMachine;
         private readonly SnackMachineContext _context;
+        private readonly SnackMachineRepository _snackMachineRepository;
 
         public HomeController(SnackMachineContext context)
         {
             _context = context;
+            _snackMachineRepository = new SnackMachineRepository(context);
         }
 
         public IActionResult Index()
         {
-            return View(new SnackMachineViewModel(_context.SnackMachines.Find(1L)));
+            SnackMachine = _snackMachineRepository.GetById(1);
+            return View(new SnackMachineViewModel(SnackMachine));
         }
 
         public IActionResult InsertCent()
         {
-            var m = _context.SnackMachines.Find(1L);
-            m.InsertMoney(Money.Cent);
-            m.BuySnack(1);
-            _context.SaveChanges();
-            return View(MainViewName, new SnackMachineViewModel(m));
+            SnackMachine.InsertMoney(Money.Cent);
+            return View(MainViewName, new SnackMachineViewModel(SnackMachine));
         }
 
         public IActionResult InsertTenCent()
@@ -66,9 +66,24 @@ namespace SnackMachine.UI.Controllers
             return View(MainViewName, new SnackMachineViewModel(SnackMachine));
         }
 
-        public IActionResult BuySnack()
+        public IActionResult BuyChocolate()
         {
             SnackMachine.BuySnack(1);
+            _snackMachineRepository.Save(SnackMachine);
+            return View(MainViewName, new SnackMachineViewModel(SnackMachine));
+        }
+
+        public IActionResult BuyCola()
+        {
+            SnackMachine.BuySnack(2);
+            _snackMachineRepository.Save(SnackMachine);
+            return View(MainViewName, new SnackMachineViewModel(SnackMachine));
+        }
+
+        public IActionResult BuyChips()
+        {
+            SnackMachine.BuySnack(3);
+            _snackMachineRepository.Save(SnackMachine);
             return View(MainViewName, new SnackMachineViewModel(SnackMachine));
         }
     }

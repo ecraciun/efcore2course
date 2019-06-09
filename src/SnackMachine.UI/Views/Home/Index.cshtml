@@ -17,9 +17,6 @@
 
         <a asp-action="@nameof(HomeController.ReturnMoeny)">Return Money</a>
 
-        <a asp-action="@nameof(HomeController.BuySnack)">Buy Snack</a>
-
-
         <p>Amount inserted: @Model.MoneyInTransaction</p>
         <p>Amount inside: @Model.MoneyInside.Amount.ToString()</p>
 
@@ -29,5 +26,15 @@
         <p>1$: @Model.MoneyInside.OneDollarCount</p>
         <p>5$: @Model.MoneyInside.FiveDollarCount</p>
         <p>20$: @Model.MoneyInside.TwentyDollarCount</p>
+
+        @foreach (var pile in Model.Piles)
+        {
+            <p>
+                @pile.Name : @pile.Amount at @pile.Price
+            </p>
+        }
+        <a asp-action="@nameof(HomeController.BuyChocolate)">Buy one chocolate</a>
+        <a asp-action="@nameof(HomeController.BuyCola)">Buy one cola</a>
+        <a asp-action="@nameof(HomeController.BuyChips)">Buy one chips</a>
 
     </div>
