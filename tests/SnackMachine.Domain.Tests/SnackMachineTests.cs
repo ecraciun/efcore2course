@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Xunit;
 
@@ -65,6 +66,7 @@ namespace SnackMachine.Domain.Tests
 
             snackMachine.MoneyInTransaction.Amount.Should().Be(0m);
             snackMachine.MoneyInside.Amount.Should().Be(1m);
+            snackMachine.Slots.Single(x => x.Position == 1).Quantity.Should().Be(9);
         }
     }
 }
