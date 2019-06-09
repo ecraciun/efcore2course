@@ -9,16 +9,25 @@ namespace SnackMachine.UI.Controllers
     {
         private const string MainViewName = nameof(Index);
         private static SnackMachine_ SnackMachine = new SnackMachine_();
+        private readonly SnackMachineContext _context;
+
+        public HomeController(SnackMachineContext context)
+        {
+            _context = context;
+        }
 
         public IActionResult Index()
         {
-            return View(new SnackMachineViewModel(SnackMachine));
+            return View(new SnackMachineViewModel(_context.SnackMachines.Find(1L)));
         }
 
         public IActionResult InsertCent()
         {
-            SnackMachine.InsertMoney(Money.Cent);
-            return View(MainViewName, new SnackMachineViewModel(SnackMachine));
+            var m = _context.SnackMachines.Find(1L);
+            m.InsertMoney(Money.Cent);
+            m.BuySnack();
+            _context.SaveChanges();
+            return View(MainViewName, new SnackMachineViewModel(m));
         }
 
         public IActionResult InsertTenCent()

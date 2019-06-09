@@ -14,12 +14,12 @@ namespace SnackMachine.Domain
         public static readonly Money FiveDollar = new Money(0, 0, 0, 0, 1, 0);
         public static readonly Money TwentyDollar = new Money(0, 0, 0, 0, 0, 1);
 
-        public int OneCentCount { get; }
-        public int TenCentCount { get; }
-        public int QuarterCount { get; }
-        public int OneDollarCount { get; }
-        public int FiveDollarCount { get; }
-        public int TwentyDollarCount { get; }
+        public int OneCentCount { get; private set; }
+        public int TenCentCount { get; private set; }
+        public int QuarterCount { get; private set; }
+        public int OneDollarCount { get; private set; }
+        public int FiveDollarCount { get; private set; }
+        public int TwentyDollarCount { get; private set; }
 
         public decimal Amount =>
             OneCentCount * 0.01m +
@@ -28,6 +28,10 @@ namespace SnackMachine.Domain
             OneDollarCount +
             FiveDollarCount * 5 +
             TwentyDollarCount * 20;
+
+        private Money()
+        {
+        }
 
         public Money(
             int oneCentCount,
