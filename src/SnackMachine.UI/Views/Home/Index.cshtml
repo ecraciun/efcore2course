@@ -1,0 +1,33 @@
+﻿@model SnackMachine.UI.ViewModels.SnackMachineViewModel
+@using SnackMachine.UI.Controllers
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+
+    <div class="text-center">
+        <a asp-action="@nameof(HomeController.InsertCent)">Insert 1¢</a>
+        <a asp-action="@nameof(HomeController.InsertTenCent)">Insert 10¢</a>
+        <a asp-action="@nameof(HomeController.InsertQuarter)">Insert 25¢</a>
+        <a asp-action="@nameof(HomeController.InsertDollar)">Insert 1$</a>
+        <a asp-action="@nameof(HomeController.InsertFiveDollar)">Insert 5$</a>
+        <a asp-action="@nameof(HomeController.InsertTwentyDollar)">Insert 20$</a>
+
+        <a asp-action="@nameof(HomeController.ReturnMoeny)">Return Money</a>
+
+        <a asp-action="@nameof(HomeController.BuySnack)">Buy Snack</a>
+
+
+        <p>Amount inserted: @Model.MoneyInTransaction</p>
+        <p>Amount inside: @Model.MoneyInside.Amount.ToString()</p>
+
+        <p>1¢: @Model.MoneyInside.OneCentCount</p>
+        <p>10¢: @Model.MoneyInside.TenCentCount</p>
+        <p>25¢: @Model.MoneyInside.QuarterCount</p>
+        <p>1$: @Model.MoneyInside.OneDollarCount</p>
+        <p>5$: @Model.MoneyInside.FiveDollarCount</p>
+        <p>20$: @Model.MoneyInside.TwentyDollarCount</p>
+
+    </div>

@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnackMachine.Domain", "Snac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnackMachine.Domain.Tests", "..\tests\SnackMachine.Domain.Tests\SnackMachine.Domain.Tests.csproj", "{F6B8BAC6-A379-44EB-9457-5B91CA42CD66}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnackMachine.UI", "SnackMachine.UI\SnackMachine.UI.csproj", "{36F840BF-A0A5-4EC3-B66C-353F1931C97F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{F6B8BAC6-A379-44EB-9457-5B91CA42CD66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6B8BAC6-A379-44EB-9457-5B91CA42CD66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6B8BAC6-A379-44EB-9457-5B91CA42CD66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36F840BF-A0A5-4EC3-B66C-353F1931C97F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36F840BF-A0A5-4EC3-B66C-353F1931C97F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36F840BF-A0A5-4EC3-B66C-353F1931C97F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36F840BF-A0A5-4EC3-B66C-353F1931C97F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
