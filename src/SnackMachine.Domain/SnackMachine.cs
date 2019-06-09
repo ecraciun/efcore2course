@@ -4,19 +4,19 @@ using System.Linq;
 
 namespace SnackMachine.Domain
 {
-    public class SnackMachine : Entity
+    public class SnackMachine : AggregateRoot
     {
         public Money MoneyInside { get; private set; } = Money.None;
         public Money MoneyInTransaction { get; private set; } = Money.None;
-        public List<Slot> Slots { get; private set; }
+        protected List<Slot> Slots { get; private set; }
 
         public SnackMachine()
         {
             Slots = new List<Slot>
             {
-                new Slot(this, null, 0, 0, 1),
-                new Slot(this, null, 0, 0, 2),
-                new Slot(this, null, 0, 0, 3),
+                new Slot(this, 1),
+                new Slot(this, 2),
+                new Slot(this, 3),
             };
         }
 
@@ -41,19 +41,22 @@ namespace SnackMachine.Domain
         public void BuySnack(int position)
         {
             var slot = Slots.Single(x => x.Position == position);
-            slot.Quantity--;
+            slot.SnackPile = slot.SnackPile.SubtractOne();
 
             MoneyInside += MoneyInTransaction;
 
             MoneyInTransaction = Money.None;
         }
 
-        public void LoadSnacks(int position, Snack snack, int quantity, decimal price)
+        public void LoadSnacks(int position, SnackPile snackPile)
         {
             var slot = Slots.Single(x => x.Position == position);
-            slot.Snack = snack;
-            slot.Quantity = quantity;
-            slot.Price = price;
+            slot.SnackPile = snackPile;
+        }
+
+        public SnackPile GetSnackPile(int position)
+        {
+            return Slots.Single(x => x.Position == position).SnackPile;
         }
     }
 }
