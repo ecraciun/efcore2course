@@ -6,12 +6,20 @@ namespace SnackMachine.Domain
 {
     public class Money : ValueObject<Money>
     {
-        public int OneCentCount { get; set; }
-        public int TenCentCount { get; set; }
-        public int QuarterCount { get;  set; }
-        public int OneDollarCount { get;  set; }
-        public int FiveDollarCount { get;  set; }
-        public int TwentyDollarCount { get;  set; }
+        public int OneCentCount { get; }
+        public int TenCentCount { get; }
+        public int QuarterCount { get; }
+        public int OneDollarCount { get; }
+        public int FiveDollarCount { get; }
+        public int TwentyDollarCount { get; }
+
+        public decimal Amount =>
+            OneCentCount * 0.01m +
+            TenCentCount * 0.10m +
+            QuarterCount * 0.25m +
+            OneDollarCount +
+            FiveDollarCount * 5 +
+            TwentyDollarCount * 20;
 
         public Money(
             int oneCentCount,
@@ -53,6 +61,17 @@ namespace SnackMachine.Domain
                 money1.TwentyDollarCount + money2.TwentyDollarCount);
 
             return sum;
+        }
+
+        public static Money operator -(Money money1, Money money2)
+        {
+            return new Money(
+                money1.OneCentCount - money2.OneCentCount,
+                money1.TenCentCount - money2.TenCentCount,
+                money1.QuarterCount - money2.QuarterCount,
+                money1.OneDollarCount - money2.OneDollarCount,
+                money1.FiveDollarCount - money2.FiveDollarCount,
+                money1.TwentyDollarCount - money2.TwentyDollarCount);
         }
 
         protected override IEnumerable<object> GetEqualityComponents()
