@@ -8,6 +8,12 @@ namespace SnackMachine.Domain
         public Money MoneyInTransaction { get; private set; }
 
 
+        public SnackMachine()
+        {
+            MoneyInside = new Money(0, 0, 0, 0, 0, 0);
+            MoneyInTransaction = new Money(0, 0, 0, 0, 0, 0);
+        }
+
         public void InsertMoney(Money money)
         {
             MoneyInTransaction += money;
@@ -15,14 +21,14 @@ namespace SnackMachine.Domain
 
         public void ReturnMoney()
         {
-            //MoneyInTransaction = 0;
+            MoneyInTransaction = new Money(0, 0, 0, 0, 0, 0);
         }
 
         public void BuySnack()
         {
             MoneyInside += MoneyInTransaction;
 
-            //MoneyInTransaction = 0;
+            MoneyInTransaction = new Money(0, 0, 0, 0, 0, 0);
         }
     }
 }
