@@ -2,7 +2,7 @@
 
 namespace SnackMachine.Domain
 {
-    public class SnackMachine
+    public class SnackMachine : Entity
     {
         public Money MoneyInside { get; private set; }
         public Money MoneyInTransaction { get; private set; }
