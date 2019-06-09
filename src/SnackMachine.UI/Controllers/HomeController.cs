@@ -25,7 +25,7 @@ namespace SnackMachine.UI.Controllers
         {
             var m = _context.SnackMachines.Find(1L);
             m.InsertMoney(Money.Cent);
-            m.BuySnack();
+            m.BuySnack(1);
             _context.SaveChanges();
             return View(MainViewName, new SnackMachineViewModel(m));
         }
@@ -68,7 +68,7 @@ namespace SnackMachine.UI.Controllers
 
         public IActionResult BuySnack()
         {
-            SnackMachine.BuySnack();
+            SnackMachine.BuySnack(1);
             return View(MainViewName, new SnackMachineViewModel(SnackMachine));
         }
     }
