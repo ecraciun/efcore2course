@@ -6,6 +6,14 @@ namespace SnackMachine.Domain
 {
     public class Money : ValueObject<Money>
     {
+        public static readonly Money None = new Money(0, 0, 0, 0, 0, 0);
+        public static readonly Money Cent = new Money(1, 0, 0, 0, 0, 0);
+        public static readonly Money TenCent = new Money(0, 1, 0, 0, 0, 0);
+        public static readonly Money Quarter = new Money(0, 0, 1, 0, 0, 0);
+        public static readonly Money Dollar = new Money(0, 0, 0, 1, 0, 0);
+        public static readonly Money FiveDollar = new Money(0, 0, 0, 0, 1, 0);
+        public static readonly Money TwentyDollar = new Money(0, 0, 0, 0, 0, 1);
+
         public int OneCentCount { get; }
         public int TenCentCount { get; }
         public int QuarterCount { get; }
