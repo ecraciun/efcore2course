@@ -68,9 +68,15 @@ namespace SnackMachine.UI.Controllers
 
         public IActionResult BuyChocolate()
         {
-            SnackMachine.BuySnack(1);
-            _snackMachineRepository.Save(SnackMachine);
-            return View(MainViewName, new SnackMachineViewModel(SnackMachine));
+            var vm = new SnackMachineViewModel(SnackMachine);
+            vm.ErrorMessage = SnackMachine.CanBuySnack(1);
+            if (string.IsNullOrEmpty(vm.ErrorMessage))
+            {
+                SnackMachine.BuySnack(1);
+                _snackMachineRepository.Save(SnackMachine);
+            }
+            
+            return View(MainViewName, vm);
         }
 
         public IActionResult BuyCola()

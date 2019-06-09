@@ -8,6 +8,11 @@
 
 
     <div class="text-center">
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <p>@Model.ErrorMessage</p>
+        }
+
         <a asp-action="@nameof(HomeController.InsertCent)">Insert 1¢</a>
         <a asp-action="@nameof(HomeController.InsertTenCent)">Insert 10¢</a>
         <a asp-action="@nameof(HomeController.InsertQuarter)">Insert 25¢</a>

@@ -11,6 +11,7 @@ namespace SnackMachine.UI.ViewModels
 
         public string MoneyInTransaction => _snackMachine.MoneyInTransaction.ToString();
         public Money MoneyInside => _snackMachine.MoneyInside;
+        public string ErrorMessage { get; set; }
 
         public IReadOnlyList<SnackPileViewModel> Piles
         {
