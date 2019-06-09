@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SnackMachine.Domain
 {
-    public class Money
+    public class Money : ValueObject<Money>
     {
         public int OneCentCount { get; set; }
         public int TenCentCount { get; set; }
@@ -40,6 +40,16 @@ namespace SnackMachine.Domain
                 money1.TwentyDollarCount + money2.TwentyDollarCount);
 
             return sum;
+        }
+
+        protected override IEnumerable<object> GetEqualityComponents()
+        {
+            yield return OneCentCount;
+            yield return TenCentCount;
+            yield return QuarterCount;
+            yield return OneDollarCount;
+            yield return FiveDollarCount;
+            yield return TwentyDollarCount;
         }
     }
 }
