@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SnackMachine.Domain;
 
 namespace SnackMachine.Domain.Migrations
 {
     [DbContext(typeof(SnackMachineContext))]
-    partial class SnackMachineContextModelSnapshot : ModelSnapshot
+    [Migration("20190611170323_AddedHeadOffice")]
+    partial class AddedHeadOffice
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

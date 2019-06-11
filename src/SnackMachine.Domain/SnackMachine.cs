@@ -46,6 +46,9 @@ namespace SnackMachine.Domain
             var change = MoneyInside.Allocate(MoneyInTransaction - slot.SnackPile.Price);
             MoneyInside -= change;
             MoneyInTransaction = 0m;
+
+            var ev = new PurchaseMadeEvent(slot.SnackPile.Price, slot.SnackPile.Snack.Id);
+            AddDomainEvent(ev);
         }
 
         public void LoadSnacks(int position, SnackPile snackPile)

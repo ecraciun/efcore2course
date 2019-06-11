@@ -33,6 +33,9 @@ namespace SnackMachine.UI
                     Configuration.GetConnectionString("SnackMachineConnection")));
 
             services.AddScoped<SnackMachineContext>();
+            var provider = services.BuildServiceProvider();
+            DomainEvents.Init(provider);
+            HeadOfficeInstance.Init(provider.GetService<SnackMachineContext>());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
