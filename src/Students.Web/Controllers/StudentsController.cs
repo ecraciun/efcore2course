@@ -67,7 +67,8 @@ namespace Students.Web.Controllers
             return View(new StudentPersonalInfoDto
             {
                 Email = student.Email,
-                Name = student.Name
+                Name = student.Name,
+                Id = student.Id
             });
         }
 
