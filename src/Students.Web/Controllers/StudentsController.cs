@@ -13,11 +13,13 @@ namespace Students.Web.Controllers
     {
         private readonly StudentRepository _studentRepository;
         private readonly CourseRepository _courseRepository;
+        private readonly Messages _messages;
 
-        public StudentsController(StudentRepository studentRepository, CourseRepository courseRepository)
+        public StudentsController(StudentRepository studentRepository, CourseRepository courseRepository, Messages messages)
         {
             _studentRepository = studentRepository;
             _courseRepository = courseRepository;
+            _messages = messages;
         }
 
         [HttpGet]
@@ -196,8 +198,7 @@ namespace Students.Web.Controllers
                 Name = dto.Name,
                 Id = id
             };
-            var handler = new EditPersonalInfoCommandHandler(_studentRepository);
-            var result = handler.Handle(command);
+            var result = _messages.Dispatch(command);
 
             if (!result.IsSuccess)
             {

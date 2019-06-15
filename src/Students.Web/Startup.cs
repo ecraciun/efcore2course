@@ -31,6 +31,8 @@ namespace Students.Web
             services.AddScoped<StudentContext>();
             services.AddScoped<StudentRepository>();
             services.AddScoped<CourseRepository>();
+            services.AddTransient<ICommandHandler<EditPersonalInfoCommand>, EditPersonalInfoCommandHandler>();
+            services.AddSingleton<Messages>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
