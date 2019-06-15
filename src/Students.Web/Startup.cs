@@ -33,7 +33,9 @@ namespace Students.Web
             services.AddTransient<StudentRepository>();
             services.AddTransient<CourseRepository>();
             services.AddTransient<ICommandHandler<EditPersonalInfoCommand>>(provider =>
-                new DatabaseRetryDecorator<EditPersonalInfoCommand>(new EditPersonalInfoCommandHandler(provider.GetService<StudentRepository>())));
+                new AuditLoggingDecorator<EditPersonalInfoCommand>(
+                    new DatabaseRetryDecorator<EditPersonalInfoCommand>(
+                        new EditPersonalInfoCommandHandler(provider.GetService<StudentRepository>()))));
             services.AddTransient<IQueryHandler<GetListQuery, List<StudentDto>>, GetListQueryHandler>();
             services.AddTransient<ICommandHandler<DisenrollCommand>, DisenrollCommandHandler>();
             services.AddTransient<ICommandHandler<EnrollCommand>,EnrollCommandHandler>();
