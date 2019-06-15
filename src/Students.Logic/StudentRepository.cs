@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Students.Logic
@@ -14,12 +15,20 @@ namespace Students.Logic
 
         public Student GetById(long id)
         {
-            return _context.Students.Find(id);
+            return _context.Students
+                .Include(x => x.Disenrollments)
+                .Include(x => x.Enrollments)
+                .FirstOrDefault(x => x.Id == id);
         }
 
         public IReadOnlyList<Student> GetList(string enrolledIn, int? numberOfCourses)
         {
-            var query = _context.Students.AsQueryable();
+            var query = _context.Students
+                .Include(x => x.Enrollments)
+                    .ThenInclude(x => x.Course)
+                .Include(x => x.Disenrollments)
+                    .ThenInclude(x => x.Course)
+                .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(enrolledIn))
             {

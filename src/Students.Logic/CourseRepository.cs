@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Students.Logic
 {
@@ -14,6 +15,16 @@ namespace Students.Logic
         public Course GetByName(string name)
         {
             return _context.Courses.SingleOrDefault(x => x.Name == name);
+        }
+
+        public List<Course> GetAll()
+        {
+            return _context.Courses.ToList();
+        }
+
+        public Course GetById(long id)
+        {
+            return _context.Courses.Find(id);
         }
     }
 }

@@ -10,8 +10,8 @@ using Students.Logic;
 namespace Students.Logic.Migrations
 {
     [DbContext(typeof(StudentContext))]
-    [Migration("20190613173532_OnCascadeDelete")]
-    partial class OnCascadeDelete
+    [Migration("20190615091654_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

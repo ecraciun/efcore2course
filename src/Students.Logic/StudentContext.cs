@@ -14,10 +14,10 @@ namespace Students.Logic
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Disenrollment>().HasOne(x => x.Student).WithMany(x => x.Disenrollments).OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<Disenrollment>().HasOne(x => x.Course);
+            modelBuilder.Entity<Student>().HasMany(x => x.Disenrollments).WithOne(x => x.Student).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Student>().HasMany(x => x.Enrollments).WithOne(x => x.Student).OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Enrollment>().HasOne(x => x.Student).WithMany(x => x.Enrollments).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Disenrollment>().HasOne(x => x.Course);            
             modelBuilder.Entity<Enrollment>().HasOne(x => x.Course);
         }
     }

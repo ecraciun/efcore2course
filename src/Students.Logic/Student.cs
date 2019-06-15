@@ -10,13 +10,13 @@ namespace Students.Logic
         public string Name { get; set; }
         public string Email { get; set; }
 
-        private readonly IList<Enrollment> _enrollments = new List<Enrollment>();
-        public IReadOnlyList<Enrollment> Enrollments => _enrollments.ToList();
+        //private readonly IList<Enrollment> _enrollments = new List<Enrollment>();
+        public List<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
         public Enrollment FirstEnrollment => GetEnrollment(0);
         public Enrollment SecondEnrollment => GetEnrollment(1);
 
-        private readonly IList<Disenrollment> _disenrollments = new List<Disenrollment>();
-        public IReadOnlyList<Disenrollment> Disenrollments => _disenrollments.ToList();
+        //private readonly IList<Disenrollment> _disenrollments = new List<Disenrollment>();
+        public List<Disenrollment> Disenrollments { get; set; } = new List<Disenrollment>();
 
         protected Student()
         {
@@ -31,30 +31,30 @@ namespace Students.Logic
 
         private Enrollment GetEnrollment(int index)
         {
-            if (_enrollments.Count > index)
-                return _enrollments[index];
+            if (Enrollments.Count > index)
+                return Enrollments[index];
 
             return null;
         }
 
         public void RemoveEnrollment(Enrollment enrollment)
         {
-            _enrollments.Remove(enrollment);
+            Enrollments.Remove(enrollment);
         }
 
         public void AddDisenrollmentComment(Enrollment enrollment, string comment)
         {
             var disenrollment = new Disenrollment(enrollment.Student, enrollment.Course, comment);
-            _disenrollments.Add(disenrollment);
+            Disenrollments.Add(disenrollment);
         }
 
         public void Enroll(Course course, Grade grade)
         {
-            if (_enrollments.Count >= 2)
+            if (Enrollments.Count >= 2)
                 throw new Exception("Cannot have more than 2 enrollments");
 
             var enrollment = new Enrollment(this, course, grade);
-            _enrollments.Add(enrollment);
+            Enrollments.Add(enrollment);
         }
     }
 }
