@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Students.Logic;
 using Students.Web.Utils;
-using System.Collections.Generic;
 
 namespace Students.Web
 {
@@ -32,17 +30,18 @@ namespace Students.Web
             services.AddTransient<StudentContext>();
             services.AddTransient<StudentRepository>();
             services.AddTransient<CourseRepository>();
-            services.AddTransient<ICommandHandler<EditPersonalInfoCommand>>(provider =>
-                new AuditLoggingDecorator<EditPersonalInfoCommand>(
-                    new DatabaseRetryDecorator<EditPersonalInfoCommand>(
-                        new EditPersonalInfoCommandHandler(provider.GetService<StudentRepository>()))));
-            services.AddTransient<IQueryHandler<GetListQuery, List<StudentDto>>, GetListQueryHandler>();
-            services.AddTransient<ICommandHandler<DisenrollCommand>, DisenrollCommandHandler>();
-            services.AddTransient<ICommandHandler<EnrollCommand>,EnrollCommandHandler>();
-            services.AddTransient<ICommandHandler<RegisterCommand>,RegisterCommandHandler>();
-            services.AddTransient<ICommandHandler<TransferCommand>,TransferCommandHandler>();
-            services.AddTransient<ICommandHandler<UnregisterCommand>,UnregisterCommandHandler>();
+            //services.AddTransient<ICommandHandler<EditPersonalInfoCommand>>(provider =>
+            //    new AuditLoggingDecorator<EditPersonalInfoCommand>(
+            //        new DatabaseRetryDecorator<EditPersonalInfoCommand>(
+            //            new EditPersonalInfoCommandHandler(provider.GetService<StudentRepository>()))));
+            //services.AddTransient<IQueryHandler<GetListQuery, List<StudentDto>>, GetListQueryHandler>();
+            //services.AddTransient<ICommandHandler<DisenrollCommand>, DisenrollCommandHandler>();
+            //services.AddTransient<ICommandHandler<EnrollCommand>,EnrollCommandHandler>();
+            //services.AddTransient<ICommandHandler<RegisterCommand>,RegisterCommandHandler>();
+            //services.AddTransient<ICommandHandler<TransferCommand>,TransferCommandHandler>();
+            //services.AddTransient<ICommandHandler<UnregisterCommand>,UnregisterCommandHandler>();
             services.AddSingleton<Messages>();
+            services.AddHandlers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

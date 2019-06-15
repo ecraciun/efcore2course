@@ -1,5 +1,7 @@
 ﻿namespace Students.Logic
 {
+    [AuditLog]
+    [DatabaseRetry]
     public sealed class EditPersonalInfoCommandHandler : ICommandHandler<EditPersonalInfoCommand>
     {
         private readonly StudentRepository _studentRepository;
