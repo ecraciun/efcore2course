@@ -12,8 +12,6 @@ namespace Students.Logic
 
         //private readonly IList<Enrollment> _enrollments = new List<Enrollment>();
         public List<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
-        public Enrollment FirstEnrollment => GetEnrollment(0);
-        public Enrollment SecondEnrollment => GetEnrollment(1);
 
         //private readonly IList<Disenrollment> _disenrollments = new List<Disenrollment>();
         public List<Disenrollment> Disenrollments { get; set; } = new List<Disenrollment>();

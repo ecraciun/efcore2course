@@ -22,30 +22,6 @@ namespace Students.Logic
                 .FirstOrDefault(x => x.Id == id);
         }
 
-        public IReadOnlyList<Student> GetList(string enrolledIn, int? numberOfCourses)
-        {
-            var query = _context.Students
-                .Include(x => x.Enrollments)
-                    .ThenInclude(x => x.Course)
-                //.Include(x => x.Disenrollments)
-                //    .ThenInclude(x => x.Course)
-                .AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(enrolledIn))
-            {
-                query = query.Where(x => x.Enrollments.Any(e => e.Course.Name == enrolledIn));
-            }
-
-            List<Student> result = query.ToList();
-
-            if (numberOfCourses != null)
-            {
-                result = result.Where(x => x.Enrollments.Count == numberOfCourses).ToList();
-            }
-
-            return result;
-        }
-
         public void Update(Student student)
         {
             _context.Update(student);

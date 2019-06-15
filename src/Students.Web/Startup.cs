@@ -23,23 +23,16 @@ namespace Students.Web
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+            var connectionString = new ConnectionString(Configuration.GetConnectionString("StudentsConnection"));
+
+            services.AddSingleton(connectionString);
+
             services.AddDbContextPool<StudentContext>(
-                options => options.UseSqlServer(
-                    Configuration.GetConnectionString("StudentsConnection")));
+                options => options.UseSqlServer(connectionString.Value));
 
             services.AddTransient<StudentContext>();
             services.AddTransient<StudentRepository>();
             services.AddTransient<CourseRepository>();
-            //services.AddTransient<ICommandHandler<EditPersonalInfoCommand>>(provider =>
-            //    new AuditLoggingDecorator<EditPersonalInfoCommand>(
-            //        new DatabaseRetryDecorator<EditPersonalInfoCommand>(
-            //            new EditPersonalInfoCommandHandler(provider.GetService<StudentRepository>()))));
-            //services.AddTransient<IQueryHandler<GetListQuery, List<StudentDto>>, GetListQueryHandler>();
-            //services.AddTransient<ICommandHandler<DisenrollCommand>, DisenrollCommandHandler>();
-            //services.AddTransient<ICommandHandler<EnrollCommand>,EnrollCommandHandler>();
-            //services.AddTransient<ICommandHandler<RegisterCommand>,RegisterCommandHandler>();
-            //services.AddTransient<ICommandHandler<TransferCommand>,TransferCommandHandler>();
-            //services.AddTransient<ICommandHandler<UnregisterCommand>,UnregisterCommandHandler>();
             services.AddSingleton<Messages>();
             services.AddHandlers();
         }

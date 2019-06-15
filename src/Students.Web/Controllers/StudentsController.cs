@@ -175,76 +175,6 @@ namespace Students.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private EditStudentVm ConvertToEditVm(Student student)
-        {
-            EditStudentVm result = new EditStudentVm
-            {
-                Id = student.Id,
-                Name = student.Name,
-                Email = student.Email
-            };
-
-            if (student.FirstEnrollment != null)
-            {
-                result.Course1Id = student.FirstEnrollment.Course.Id;
-                result.Course1Grade = Enum.GetName(typeof(Grade), student.FirstEnrollment.Grade);
-            }
-            if (student.SecondEnrollment != null)
-            {
-                result.Course2Id = student.SecondEnrollment.Course.Id;
-                result.Course2Grade = Enum.GetName(typeof(Grade), student.SecondEnrollment.Grade);
-            }
-
-            var allCourses = _courseRepository.GetAll();
-            allCourses.Insert(0, new Course());
-            result.CoursesForC1 = allCourses.Select(
-                x => new SelectListItem(x.ToString(), x.Id.ToString(), x.Id == result.Course1Id)).ToList();
-            result.CoursesForC2 = allCourses.Select(
-                x => new SelectListItem(x.ToString(), x.Id.ToString(), x.Id == result.Course2Id)).ToList();
-
-            result.GradesForC1 = Enum.GetValues(typeof(Grade)).Cast<Grade>()
-                    .Select(x => new SelectListItem(Enum.GetName(typeof(Grade), x), x.ToString(),
-                    x == student.FirstEnrollment?.Grade)).ToList();
-            result.GradesForC2 = Enum.GetValues(typeof(Grade)).Cast<Grade>()
-                    .Select(x => new SelectListItem(Enum.GetName(typeof(Grade), x), x.ToString(),
-                    x == student.SecondEnrollment?.Grade)).ToList();
-
-            return result;
-        }
-
-        private Student ConvertFromCreateVmToStudent(CreateStudentDto studentVm)
-        {
-            Student result = null;
-
-            if (studentVm != null)
-            {
-                result = new Student(studentVm.Name, studentVm.Email);
-                if (studentVm.Course1Id != default)
-                {
-
-                    result.Enrollments.Add(new Enrollment(
-                        result,
-                        _courseRepository.GetById(studentVm.Course1Id),
-                         (Grade)Enum.Parse(typeof(Grade), studentVm.Course1Grade)));
-                }
-
-                if (studentVm.Course2Id != default)
-                {
-                    result.Enrollments.Add(new Enrollment(
-                        result,
-                        _courseRepository.GetById(studentVm.Course2Id),
-                         (Grade)Enum.Parse(typeof(Grade), studentVm.Course2Grade)));
-                }
-            }
-
-            return result;
-        }
-
-        private Grade GetGradeFromString(string grade)
-        {
-            return (Grade)Enum.Parse(typeof(Grade), grade);
-        }
-
         private StudentDto ConvertToDto(Student student)
         {
             return new StudentDto
@@ -252,12 +182,12 @@ namespace Students.Web.Controllers
                 Id = student.Id,
                 Name = student.Name,
                 Email = student.Email,
-                Course1 = student.FirstEnrollment?.Course?.Name,
-                Course1Grade = student.FirstEnrollment?.Grade.ToString(),
-                Course1Credits = student.FirstEnrollment?.Course?.Credits,
-                Course2 = student.SecondEnrollment?.Course?.Name,
-                Course2Grade = student.SecondEnrollment?.Grade.ToString(),
-                Course2Credits = student.SecondEnrollment?.Course?.Credits,
+                Course1 = student.GetEnrollment(0)?.Course?.Name,
+                Course1Grade = student.GetEnrollment(0)?.Grade.ToString(),
+                Course1Credits = student.GetEnrollment(0)?.Course?.Credits,
+                Course2 = student.GetEnrollment(1)?.Course?.Name,
+                Course2Grade = student.GetEnrollment(1)?.Grade.ToString(),
+                Course2Credits = student.GetEnrollment(1)?.Course?.Credits,
             };
         }
     }
