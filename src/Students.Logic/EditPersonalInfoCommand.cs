@@ -2,8 +2,15 @@
 {
     public sealed class EditPersonalInfoCommand : ICommand
     {
-        public long Id { get; set; }
-        public string Name { get; set; }
-        public string Email { get; set; }
+        public long Id { get; }
+        public string Name { get; }
+        public string Email { get; }
+
+        public EditPersonalInfoCommand(long id, string name, string email)
+        {
+            Id = id;
+            Name = name;
+            Email = email;
+        }
     }
 }

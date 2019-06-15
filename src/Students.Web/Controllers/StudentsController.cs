@@ -45,14 +45,16 @@ namespace Students.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Register(
-            [FromForm]CreateStudentDto student)
+            [FromForm]CreateStudentDto dto)
         {
-            if (ModelState.IsValid)
+            var command = new RegisterCommand(dto.Name, dto.Email, dto.Course1Id, dto.Course1Grade, dto.Course2Id, dto.Course2Grade);
+            var result = _messages.Dispatch(command);
+            if (!result.IsSuccess)
             {
-                _studentRepository.Add(ConvertFromCreateVmToStudent(student));
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            return View(student);
+
+            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Edit(long id)
@@ -89,28 +91,26 @@ namespace Students.Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult UnregisterConfirmed(long id)
         {
-            var student = _studentRepository.GetById(id);
-            _studentRepository.Delete(student);
+            var command = new UnregisterCommand(id);
+            var result = _messages.Dispatch(command);
+
+            if (!result.IsSuccess)
+            {
+                return NotFound();
+            }
             return RedirectToAction(nameof(Index));
         }
 
         [HttpPost("[controller]/{id}/enrollments")]
         public IActionResult Enroll(long id, [FromForm]StudentEnrollmentDto dto)
         {
-            var student = _studentRepository.GetById(id);
-            if (student == null)
+            var command = new EnrollCommand(id, dto.CourseId, dto.Grade);
+            var result = _messages.Dispatch(command);
+
+            if (!result.IsSuccess)
             {
                 return NotFound();
             }
-
-            var course = _courseRepository.GetById(dto.CourseId);
-            if(course == null)
-            {
-                return NotFound();
-            }
-
-            student.Enroll(course, dto.Grade);
-            _studentRepository.Update(student);
 
             return RedirectToAction(nameof(Index));
         }
@@ -136,53 +136,26 @@ namespace Students.Web.Controllers
         [HttpPost("[controller]/{id}/enrollments/{enrollmentNumber}")]
         public IActionResult Transfer(long id, int enrollmentNumber, [FromForm]StudentTransferDto dto)
         {
-            var student = _studentRepository.GetById(id);
-            if (student == null)
+            var command = new TransferCommand(id, enrollmentNumber, dto.CourseId, dto.Grade);
+            var result = _messages.Dispatch(command);
+
+            if (!result.IsSuccess)
             {
                 return NotFound();
             }
-
-            var course = _courseRepository.GetById(dto.CourseId);
-            if (course == null)
-            {
-                return NotFound();
-            }
-
-            var enrollment = student.GetEnrollment(enrollmentNumber);
-            if(enrollment == null)
-            {
-                return NotFound();
-            }
-
-            enrollment.Update(course, dto.Grade);
-            _studentRepository.Update(student);
-
             return RedirectToAction(nameof(Index));
         }
 
         [HttpPost("[controller]/{id}/enrollments/{enrollmentNumber}/delete")]
         public IActionResult Disenroll(long id, int enrollmentNumber, [FromForm]StudentDisenrollmentDto dto)
         {
-            var student = _studentRepository.GetById(id);
-            if (student == null)
-            {
-                return NotFound();
-            }
-            if (string.IsNullOrEmpty(dto.Comment))
-            {
-                return NotFound();
-            }
-            var enrollment = student.GetEnrollment(enrollmentNumber);
-            if (enrollment == null)
-            {
-                return NotFound();
-            }
+            var command = new DisenrollCommand(id, enrollmentNumber, dto.Comment);
+            var result = _messages.Dispatch(command);
 
-            //student.RemoveEnrollment(enrollment);
-            //student.AddDisenrollmentComment(enrollment, studentDisenrollmentDto.Comment);
-
-            student.RemoveEnrollment(enrollment, dto.Comment);
-            _studentRepository.Update(student);
+            if (!result.IsSuccess)
+            {
+                return NotFound();
+            }
 
             return RedirectToAction(nameof(Index));
         }
@@ -190,12 +163,7 @@ namespace Students.Web.Controllers
         [HttpPost("[controller]/{id}")]
         public IActionResult UpdatePersonalInfo(long id, [FromForm]StudentPersonalInfoDto dto)
         {
-            var command = new EditPersonalInfoCommand
-            {
-                Email = dto.Email,
-                Name = dto.Name,
-                Id = id
-            };
+            var command = new EditPersonalInfoCommand(id, dto.Name, dto.Email);
             var result = _messages.Dispatch(command);
 
             if (!result.IsSuccess)
