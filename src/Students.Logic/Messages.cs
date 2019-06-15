@@ -21,5 +21,16 @@ namespace Students.Logic
             Result result = handler.Handle((dynamic)command);
             return result;
         }
+
+        public T Dispatch<T>(IQuery<T> query)
+        {
+            var type = typeof(IQueryHandler<,>);
+            Type[] typeArgs = { query.GetType(), typeof(T) };
+            var handlerType = type.MakeGenericType(typeArgs);
+
+            dynamic handler = _serviceProvider.GetService(handlerType);
+            T result = handler.Handle((dynamic)query);
+            return result;
+        }
     }
 }

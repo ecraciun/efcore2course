@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Students.Logic;
 using Students.Web.Utils;
+using System.Collections.Generic;
 
 namespace Students.Web
 {
@@ -28,10 +29,11 @@ namespace Students.Web
                 options => options.UseSqlServer(
                     Configuration.GetConnectionString("StudentsConnection")));
 
-            services.AddScoped<StudentContext>();
-            services.AddScoped<StudentRepository>();
-            services.AddScoped<CourseRepository>();
+            services.AddTransient<StudentContext>();
+            services.AddTransient<StudentRepository>();
+            services.AddTransient<CourseRepository>();
             services.AddTransient<ICommandHandler<EditPersonalInfoCommand>, EditPersonalInfoCommandHandler>();
+            services.AddTransient<IQueryHandler<GetListQuery, List<StudentDto>>, GetListQueryHandler>();
             services.AddSingleton<Messages>();
         }
 

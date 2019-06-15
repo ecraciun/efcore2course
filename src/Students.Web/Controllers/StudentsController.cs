@@ -26,9 +26,7 @@ namespace Students.Web.Controllers
         [Route("[controller]/[action]/{enrolled?}/{number?}")]
         public IActionResult Index(string enrolled, int? number)
         {
-            return View(
-                _studentRepository.GetList(enrolled, number).Select(x => ConvertToDto(x)).ToList()
-                );
+            return View(_messages.Dispatch(new GetListQuery(enrolled, number)));
         }
 
         public IActionResult Register()
@@ -208,22 +206,6 @@ namespace Students.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private StudentDto ConvertToDto(Student student)
-        {
-            return new StudentDto
-            {
-                Id = student.Id,
-                Name = student.Name,
-                Email = student.Email,
-                Course1 = student.FirstEnrollment?.Course?.Name,
-                Course1Grade = student.FirstEnrollment?.Grade.ToString(),
-                Course1Credits = student.FirstEnrollment?.Course?.Credits,
-                Course2 = student.SecondEnrollment?.Course?.Name,
-                Course2Grade = student.SecondEnrollment?.Grade.ToString(),
-                Course2Credits = student.SecondEnrollment?.Course?.Credits,
-            };
-        }
-
         private EditStudentVm ConvertToEditVm(Student student)
         {
             EditStudentVm result = new EditStudentVm
@@ -292,6 +274,22 @@ namespace Students.Web.Controllers
         private Grade GetGradeFromString(string grade)
         {
             return (Grade)Enum.Parse(typeof(Grade), grade);
+        }
+
+        private StudentDto ConvertToDto(Student student)
+        {
+            return new StudentDto
+            {
+                Id = student.Id,
+                Name = student.Name,
+                Email = student.Email,
+                Course1 = student.FirstEnrollment?.Course?.Name,
+                Course1Grade = student.FirstEnrollment?.Grade.ToString(),
+                Course1Credits = student.FirstEnrollment?.Course?.Credits,
+                Course2 = student.SecondEnrollment?.Course?.Name,
+                Course2Grade = student.SecondEnrollment?.Grade.ToString(),
+                Course2Credits = student.SecondEnrollment?.Course?.Credits,
+            };
         }
     }
 }
