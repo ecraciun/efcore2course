@@ -29,7 +29,7 @@ namespace Students.Logic
             Email = email;
         }
 
-        private Enrollment GetEnrollment(int index)
+        public Enrollment GetEnrollment(int index)
         {
             if (Enrollments.Count > index)
                 return Enrollments[index];
@@ -37,13 +37,9 @@ namespace Students.Logic
             return null;
         }
 
-        public void RemoveEnrollment(Enrollment enrollment)
+        public void RemoveEnrollment(Enrollment enrollment, string comment)
         {
             Enrollments.Remove(enrollment);
-        }
-
-        public void AddDisenrollmentComment(Enrollment enrollment, string comment)
-        {
             var disenrollment = new Disenrollment(enrollment.Student, enrollment.Course, comment);
             Disenrollments.Add(disenrollment);
         }

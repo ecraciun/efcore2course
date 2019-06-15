@@ -29,7 +29,7 @@ namespace Students.Web.Controllers
                 );
         }
 
-        public IActionResult Create()
+        public IActionResult Register()
         {
             var courses = _courseRepository.GetAll();
             courses.Insert(0, new Course());
@@ -42,13 +42,10 @@ namespace Students.Web.Controllers
             return View(createVM);
         }
 
-        // POST: Students/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(
-            [Bind("Name,Email,Course1Id,Course1Grade,Course2Id,Course2Grade")] CreateStudentViewModel student)
+        public IActionResult Register(
+            [FromForm]CreateStudentDto student)
         {
             if (ModelState.IsValid)
             {
@@ -58,7 +55,6 @@ namespace Students.Web.Controllers
             return View(student);
         }
 
-
         public IActionResult Edit(long id)
         {
             var student = _studentRepository.GetById(id);
@@ -66,26 +62,14 @@ namespace Students.Web.Controllers
             {
                 return NotFound();
             }
-            return View(ConvertToEditVm(student));
+            return View(new StudentPersonalInfoDto
+            {
+                Email = student.Email,
+                Name = student.Name
+            });
         }
 
-        // POST: Students/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Edit(
-            [Bind("Id,Name,Email,Course1Id,Course1Grade,Course2Id,Course2Grade,C1DisenrollmentComment,C2DisenrollmentComment")] EditStudentVm studentVm)
-        {
-            var student = ConvertFromEditVmToStudent(studentVm);
-            if (student == null) return new RedirectToActionResult(nameof(Edit), "Students", studentVm.Id);
-
-            _studentRepository.Update(student);
-            return RedirectToAction(nameof(Index));
-        }
-
-
-        public IActionResult Delete(long? id)
+        public IActionResult Unregister(long? id)
         {
             if (id == null)
             {
@@ -101,13 +85,121 @@ namespace Students.Web.Controllers
             return View(ConvertToDto(student));
         }
 
-
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("Unregister")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(long id)
+        public IActionResult UnregisterConfirmed(long id)
         {
             var student = _studentRepository.GetById(id);
             _studentRepository.Delete(student);
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost("[controller]/{id}/enrollments")]
+        public IActionResult Enroll(long id, [FromForm]StudentEnrollmentDto dto)
+        {
+            var student = _studentRepository.GetById(id);
+            if (student == null)
+            {
+                return NotFound();
+            }
+
+            var course = _courseRepository.GetById(dto.CourseId);
+            if(course == null)
+            {
+                return NotFound();
+            }
+
+            student.Enroll(course, dto.Grade);
+            _studentRepository.Update(student);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet("[controller]/{id}/enrollments")]
+        public IActionResult Enroll(long id)
+        {
+            return View("Enroll");
+        }
+
+        [HttpGet("[controller]/{id}/enrollments/{enrollmentNumber}")]
+        public IActionResult Transfer(long id, int enrollmentNumber)
+        {
+            return View("Transfer");
+        }
+
+        [HttpGet("[controller]/{id}/enrollments/{enrollmentNumber}/delete")]
+        public IActionResult Disenroll(long id, int enrollmentNumber)
+        {
+            return View("Disenroll");
+        }
+
+        [HttpPost("[controller]/{id}/enrollments/{enrollmentNumber}")]
+        public IActionResult Transfer(long id, int enrollmentNumber, [FromForm]StudentTransferDto dto)
+        {
+            var student = _studentRepository.GetById(id);
+            if (student == null)
+            {
+                return NotFound();
+            }
+
+            var course = _courseRepository.GetById(dto.CourseId);
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            var enrollment = student.GetEnrollment(enrollmentNumber);
+            if(enrollment == null)
+            {
+                return NotFound();
+            }
+
+            enrollment.Update(course, dto.Grade);
+            _studentRepository.Update(student);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost("[controller]/{id}/enrollments/{enrollmentNumber}/delete")]
+        public IActionResult Disenroll(long id, int enrollmentNumber, [FromForm]StudentDisenrollmentDto dto)
+        {
+            var student = _studentRepository.GetById(id);
+            if (student == null)
+            {
+                return NotFound();
+            }
+            if (string.IsNullOrEmpty(dto.Comment))
+            {
+                return NotFound();
+            }
+            var enrollment = student.GetEnrollment(enrollmentNumber);
+            if (enrollment == null)
+            {
+                return NotFound();
+            }
+
+            //student.RemoveEnrollment(enrollment);
+            //student.AddDisenrollmentComment(enrollment, studentDisenrollmentDto.Comment);
+
+            student.RemoveEnrollment(enrollment, dto.Comment);
+            _studentRepository.Update(student);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost("[controller]/{id}")]
+        public IActionResult UpdatePersonalInfo(long id, [FromForm]StudentPersonalInfoDto dto)
+        {
+            var student = _studentRepository.GetById(id);
+            if (student == null)
+            {
+                return NotFound();
+            }
+
+            student.Name = dto.Name;
+            student.Email = dto.Email;
+            _studentRepository.Update(student);
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -164,7 +256,7 @@ namespace Students.Web.Controllers
             return result;
         }
 
-        private Student ConvertFromCreateVmToStudent(CreateStudentViewModel studentVm)
+        private Student ConvertFromCreateVmToStudent(CreateStudentDto studentVm)
         {
             Student result = null;
 
@@ -190,76 +282,6 @@ namespace Students.Web.Controllers
             }
 
             return result;
-        }
-
-        private Student ConvertFromEditVmToStudent(EditStudentVm studentVm)
-        {
-            var student = _studentRepository.GetById(studentVm.Id);
-            if (student == null) return null;
-
-            // If disenrolled -> must provide reason
-            if (studentVm.Course2Id == default && student.SecondEnrollment != null &&
-                string.IsNullOrEmpty(studentVm.C2DisenrollmentComment))
-                return null;
-            if (studentVm.Course1Id == default && student.FirstEnrollment != null &&
-                string.IsNullOrEmpty(studentVm.C1DisenrollmentComment))
-                return null;
-
-
-            // No initial first enrollment
-            if (student.SecondEnrollment == null && studentVm.Course2Id != default)
-            {
-                student.Enroll(_courseRepository.GetById(studentVm.Course2Id),
-                    GetGradeFromString(studentVm.Course2Grade));
-            }
-            if (student.FirstEnrollment == null && studentVm.Course1Id != default)
-            {
-                student.Enroll(_courseRepository.GetById(studentVm.Course1Id),
-                    GetGradeFromString(studentVm.Course1Grade));
-            }
-
-            // Disenrolled
-            if (student.SecondEnrollment != null && studentVm.Course2Id == default)
-            {
-                var enrollmentToRemove = student.SecondEnrollment;
-                student.RemoveEnrollment(enrollmentToRemove);
-                student.AddDisenrollmentComment(enrollmentToRemove, studentVm.C2DisenrollmentComment);
-            }
-            if (student.FirstEnrollment != null && studentVm.Course1Id == default)
-            {
-                var enrollmentToRemove = student.FirstEnrollment;
-                student.RemoveEnrollment(enrollmentToRemove);
-                student.AddDisenrollmentComment(enrollmentToRemove, studentVm.C1DisenrollmentComment);
-            }
-
-            // Changed enrollement
-            if (student.SecondEnrollment != null && studentVm.Course2Id != student.SecondEnrollment.Course.Id)
-            {
-                student.RemoveEnrollment(student.SecondEnrollment);
-                student.Enroll(_courseRepository.GetById(studentVm.Course2Id),
-                    GetGradeFromString(studentVm.Course2Grade));
-            }
-            if (student.FirstEnrollment != null && studentVm.Course2Id != student.FirstEnrollment.Course.Id)
-            {
-                student.RemoveEnrollment(student.FirstEnrollment);
-                student.Enroll(_courseRepository.GetById(studentVm.Course1Id),
-                    GetGradeFromString(studentVm.Course1Grade));
-            }
-
-            // Changed grade
-            if (student.SecondEnrollment != null && student.SecondEnrollment.Course.Id == studentVm.Course2Id)
-            {
-                student.SecondEnrollment.Grade = GetGradeFromString(studentVm.Course2Grade);
-            }
-            if (student.FirstEnrollment != null && student.FirstEnrollment.Course.Id == studentVm.Course1Id)
-            {
-                student.FirstEnrollment.Grade = GetGradeFromString(studentVm.Course1Grade);
-            }
-
-            student.Name = studentVm.Name;
-            student.Email = studentVm.Email;
-
-            return student;
         }
 
         private Grade GetGradeFromString(string grade)
