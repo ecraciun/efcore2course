@@ -16,8 +16,9 @@ namespace Students.Logic
         public Student GetById(long id)
         {
             return _context.Students
-                .Include(x => x.Disenrollments)
+                //.Include(x => x.Disenrollments)
                 .Include(x => x.Enrollments)
+                .ThenInclude(x => x.Course)
                 .FirstOrDefault(x => x.Id == id);
         }
 
@@ -26,8 +27,8 @@ namespace Students.Logic
             var query = _context.Students
                 .Include(x => x.Enrollments)
                     .ThenInclude(x => x.Course)
-                .Include(x => x.Disenrollments)
-                    .ThenInclude(x => x.Course)
+                //.Include(x => x.Disenrollments)
+                //    .ThenInclude(x => x.Course)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(enrolledIn))

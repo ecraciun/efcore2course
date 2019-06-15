@@ -1,4 +1,4 @@
-﻿@model Students.Logic.Student
+﻿@model Students.Web.Dtos.EditStudentVm
 
 @{
     ViewData["Title"] = "Edit";
@@ -12,19 +12,41 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input asp-for="Id" type="hidden" />
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
                 <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
             </div>
-            <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <label class="control-label">Course 1</label>
+                <select asp-for="Course1Id" asp-items="Model.CoursesForC1"></select>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Course 1 grade</label>
+                <select asp-for="Course1Grade" asp-items="Model.GradesForC1"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="C1DisenrollmentComment" class="control-label"></label>
+                <input asp-for="C1DisenrollmentComment" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label class="control-label">Course 2</label>
+                <select asp-for="Course2Id" asp-items="Model.CoursesForC2"></select>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Course 2 grade</label>
+                <select asp-for="Course2Grade" asp-items="Model.GradesForC2"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="C2DisenrollmentComment" class="control-label"></label>
+                <input asp-for="C2DisenrollmentComment" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>

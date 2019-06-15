@@ -4,7 +4,7 @@
     {
         public Student Student { get; protected set; }
         public Course Course { get; protected set; }
-        public Grade Grade { get; protected set; }
+        public Grade Grade { get;  set; }
 
         protected Enrollment()
         {
