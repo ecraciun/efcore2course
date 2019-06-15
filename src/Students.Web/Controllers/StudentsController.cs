@@ -190,15 +190,19 @@ namespace Students.Web.Controllers
         [HttpPost("[controller]/{id}")]
         public IActionResult UpdatePersonalInfo(long id, [FromForm]StudentPersonalInfoDto dto)
         {
-            var student = _studentRepository.GetById(id);
-            if (student == null)
+            var command = new EditPersonalInfoCommand
+            {
+                Email = dto.Email,
+                Name = dto.Name,
+                Id = id
+            };
+            var handler = new EditPersonalInfoCommandHandler(_studentRepository);
+            var result = handler.Handle(command);
+
+            if (!result.IsSuccess)
             {
                 return NotFound();
             }
-
-            student.Name = dto.Name;
-            student.Email = dto.Email;
-            _studentRepository.Update(student);
 
             return RedirectToAction(nameof(Index));
         }
