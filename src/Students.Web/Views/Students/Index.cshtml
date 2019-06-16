@@ -1,0 +1,78 @@
+﻿@model IList<Students.Logic.StudentDto>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Register">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>C1</th>
+            <th>C1 credits</th>
+            <th>C1 grade</th>
+            <th>C2</th>
+            <th>C2 grade</th>
+            <th>C2 credits</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Course1)
+                @if (string.IsNullOrEmpty(item.Course1))
+                {
+                    <a href="/students/0/enrollments">Enroll</a>
+                }
+                @if (!string.IsNullOrEmpty(item.Course1))
+                {
+                    <a href="/students/0/enrollments/0">Transfer</a>
+                    <a href="/students/0/enrollments/0/delete">Disenroll</a>
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Course1Credits)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Course1Grade)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Course2)
+                @if (string.IsNullOrEmpty(item.Course1))
+                {
+                    <a href="/students/0/enrollments">Enroll</a>
+                }
+                @if (!string.IsNullOrEmpty(item.Course1))
+                {
+                    <a href="/students/0/enrollments/0">Transfer</a>
+                    <a href="/students/0/enrollments/0/delete">Disenroll</a>
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Course2Credits)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Course2Grade)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Unregister" asp-route-id="@item.Id">Unregister</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

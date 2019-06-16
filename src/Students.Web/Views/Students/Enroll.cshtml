@@ -1,0 +1,15 @@
+﻿@model Students.Web.Dtos.StudentTransferDto
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Enroll</h1>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
